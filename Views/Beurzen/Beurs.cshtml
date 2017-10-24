@@ -58,12 +58,28 @@
                                     @if (diff < 0)
                                     {
                                         @Math.Abs(diff).ToString("P")
-                                        @:Decrease in @dagen Days
+                                        @:Afname in @dagen
+                                        if (dagen != 1)
+                                        {
+                                            @:Dagen
+                                        }
+                                        else
+                                        {
+                                            @: Dag
+                                        }
                                     }
                                     else
                                     {
                                         @diff.ToString("P")
-                                        @:Increase in @dagen Days
+                                        @:Toename in @dagen
+                                        if (dagen != 1)
+                                        {
+                                            @:Dagen
+                                        }
+                                        else
+                                        {
+                                            @: Dag
+                                        }
                                     }
                                 </span>
 
