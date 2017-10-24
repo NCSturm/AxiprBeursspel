@@ -1,0 +1,147 @@
+﻿@using System.Runtime.InteropServices.ComTypes
+@model Beursspel.Models.BeursViewModels.BeursModel
+
+@{
+    ViewBag.Title = Model.Beurs.Naam;
+    Layout = "_Layout";
+}
+
+
+<div class="row">
+    <div class="col-sm-6 col-xs-12">
+        <div class="box">
+            <div class="box-header">
+                <h3 class="box-title">Informatie</h3>
+            </div>
+            <div class="box-body">
+                <img alt="logo" class="img-responsive center-block"/>
+                <p id="beurs-omschrijving"></p>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-xs-12">
+        <div class="box">
+            <div class="box-header">
+                <h3 class="box-title">Beursgeschiedenis</h3>
+            </div>
+            <div class="box-body" style="min-height: 250px;">
+                <div class="chart">
+                    <canvas id="areaChart" style="height:250px"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-3 col-sm-6 col-xs-12">
+        <div class="row" style="padding-right: 15px;padding-left: 15px; padding-top: 2px;">
+                @{
+                    var eerste = @Model.Beurs.OudeWaardes.FirstOrDefault();
+                    if (eerste != null)
+                    {
+                        var verschilWaardes = Model.Beurs.HuidigeWaarde - eerste.Waarde;
+                        var diff = (verschilWaardes / eerste.Waarde);
+                        var dagen = (int) (DateTime.Now - eerste.Tijd).TotalDays;
+                        var color = diff > 0 ? "green" : "red";
+                        var icon = diff > 0 ? "thumbs-o-up" : "thumbs-o-down";
+                        <div class="info-box bg-@color">
+                            <span class="info-box-icon"><i class="fa fa-@icon"></i></span>
+
+                            <div class="info-box-content">
+                                <span class="info-box-text">Huidige Waarde</span>
+                                <span class="info-box-number">@Model.Beurs.HuidigeWaarde</span>
+
+                                <div class="progress">
+                                    <div class="progress-bar" style="width: @Math.Abs(diff).ToString("P")"></div>
+                                </div>
+                                <span class="progress-description">
+                                    @if (diff < 0)
+                                    {
+                                        @Math.Abs(diff).ToString("P")
+                                        @:Decrease in @dagen Days
+                                    }
+                                    else
+                                    {
+                                        @diff.ToString("P")
+                                        @:Increase in @dagen Days
+                                    }
+                                </span>
+
+
+                            </div>
+                            <!-- /.info-box-content -->
+                        </div>
+                    }
+                }
+                <div class="info-box">
+                    <span class="info-box-icon bg-blue"><i class="fa fa-star-o"></i></span>
+
+                    <div class="info-box-content">
+                        <span class="info-box-text">Jouw Aandelen</span>
+                        <span class="info-box-number">@Model.Aantal</span>
+                    </div>
+                    <!-- /.info-box-content -->
+                </div>        <!-- /.info-box -->
+
+
+        </div>
+        <!-- small box -->
+    </div>
+
+    <div class="col-xs-12 col-sm-6">
+        <div class="box">
+            <div class="box-header">
+                <h3 class="box-title">Handel</h3>
+            </div>
+            <div class="box-body">
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <form asp-action="KoopAandelen" class="form-inline">
+                    <h4>Koop aandelen.</h4>
+                    <div class="form-group">
+                        <input asp-for="BeursId" value="@Model.Beurs.BeursId" readonly="readonly" hidden/>
+                        <label asp-for="Aantal"></label>
+                        <input asp-for="Aantal" class="form-control"/>
+                    </div>
+                    <button type="submit" class="btn btn-success">Koop</button>
+                </form>
+                <form asp-action="VerkoopAandelen" class="form-inline">
+                    <h4>Verkoop aandelen.</h4>
+                    <div class="form-group">
+                        <input asp-for="BeursId" value="@Model.Beurs.BeursId" readonly="readonly" hidden/>
+                        <label asp-for="Aantal"></label>
+                        <input asp-for="Aantal" class="form-control"/>
+                    </div>
+                    <button type="submit" class="btn btn-danger">Verkoop</button>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts
+{
+    <script src="/lib/chart.js/chart.js"></script>
+    <script src="/js/beurs-chart.js"></script>
+    <script>
+        var chartLabels = [];
+        var chartData = [];
+        @if (Model.Beurs.OudeWaardes != null)
+        {
+            foreach (var oudeWaarde in Model.Beurs.OudeWaardes)
+            {
+                @:chartLabels.push('@oudeWaarde.Tijd.Date.ToString("dd/MM")');
+                            @:chartData.push('@oudeWaarde.Waarde');
+            }
+        }
+        chartLabels.push('@DateTime.Now.Date.ToString("dd/MM")');
+        chartData.push('@Model.Beurs.HuidigeWaarde');
+
+        window.onload = function() {
+            setGebruikerGeld();
+            $("#beurs-omschrijving").html(markdownify("@Model.Beurs.Omschrijving"));
+            setupbeurschart(chartLabels, chartData);
+        }
+    </script>
+
+}

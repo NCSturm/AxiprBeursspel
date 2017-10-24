@@ -1,0 +1,198 @@
+﻿@using Beursspel.Utilities
+@model List<Beursspel.Models.AdminViewModels.UserListModel>
+
+@{
+    ViewBag.Title = "Users";
+    Layout = "_Layout";
+}
+
+@section style
+{
+    <environment include="Development">
+        <link rel="stylesheet" href="~/lib/bootstrap-datatables/dataTables.bootstrap.css"/>
+    </environment>
+    <environment exclude="Development">
+        <link rel="stylesheet" href="~/lib/bootstrap-datatables/dataTables.bootstrap.min.css"/>
+    </environment>
+
+}
+
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box">
+            <div class="box-header">
+                <h3 class="box-title">Gebruikers</h3>
+            </div>
+            <div class="box-body table-responsive">
+                <table id="users" class="table table-bordered table-hover ">
+                    <thead>
+                    <tr>
+                        <td>
+                            Gebruikersnaam
+                        </td>
+                        <td>
+                            Naam
+                        </td>
+                        <td>
+                            Waarde
+                        </td>
+                        <td>
+                            Rollen
+                        </td>
+                        <td></td>
+                    </tr>
+                    </thead>
+                    @foreach (var user in Model)
+                    {
+                        <tr>
+                            <td>
+                                @user.Username
+                            </td>
+                            <td>
+                                @user.Naam
+                            </td>
+                            <td>
+                                @user.HuidigeWaarde
+                            </td>
+                            <td>
+                                @user.Rollen.Join()
+                            </td>
+                            <td>
+                                @if (user.Rollen.Contains("Betaald"))
+                                {
+                                    <button type="button" class="remove_betaald bg-green btn btn-flat" data-id="@user.UserId">Betaald</button>
+                                }
+                                else
+                                {
+                                    <button type="button" class="grant_betaald btn btn-flat" data-id="@user.UserId">Betaald</button>
+                                }
+
+
+                                @if (user.Rollen.Contains("Tapper"))
+                                {
+                                    <button type="button" class="remove_tapper bg-orange btn btn-flat" data-id="@user.UserId">Tapper</button>
+                                }
+                                else
+                                {
+                                    <button type="button" class="grant_tapper btn btn-flat" data-id="@user.UserId">Tapper</button>
+                                }
+
+
+                                @if (user.Rollen.Contains("Admin"))
+                                {
+                                    <button type="button" class="remove_admin bg-orange btn btn-flat" data-id="@user.UserId">Admin</button>
+                                }
+                                else
+                                {
+                                    <button type="button" class="grant_admin btn btn-flat" data-id="@user.UserId">Admin</button>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+@section scripts
+{
+    @await Html.PartialAsync("_DataTableScriptsPartial")
+
+    <script>
+        $('.grant_admin').on('click', function (e) {
+
+            $.ajax({
+                url: '@Url.Action("GrantAdmin", "Admin")',
+                type: "POST",
+                data: {
+                    data: this.dataset.id
+                },
+                success: function () {
+                    location.reload();
+                }
+            });
+        });
+        $('.remove_admin').on('click', function (e) {
+
+            $.ajax({
+                url: '@Url.Action("RemoveAdmin", "Admin")',
+                type: "POST",
+                data: {
+                    data: this.dataset.id
+                },
+                success: function () {
+                    location.reload();
+                }
+            });
+        });
+        $('.grant_tapper').on('click', function (e) {
+
+            $.ajax({
+                url: '@Url.Action("GrantTapper", "Admin")',
+                type: "POST",
+                data: {
+                    data: this.dataset.id
+                },
+                success: function () {
+                    location.reload();
+                }
+            });
+
+        });
+        $('.remove_tapper').on('click', function (e) {
+
+            $.ajax({
+                url: '@Url.Action("RemoveTapper", "Admin")',
+                type: "POST",
+                data: {
+                    data: this.dataset.id
+                },
+                success: function () {
+                    location.reload();
+                }
+            });
+        });
+        $('.grant_betaald').on('click', function (e) {
+
+            $.ajax({
+                url: '@Url.Action("GrantBetaald", "Admin")',
+                type: "POST",
+                data: {
+                    data: this.dataset.id
+                },
+                success: function () {
+                    location.reload();
+                }
+            });
+
+        });
+        $('.remove_betaald').on('click', function (e) {
+
+            $.ajax({
+                url: '@Url.Action("RemoveBetaald", "Admin")',
+                type: "POST",
+                data: {
+                    data: this.dataset.id
+                },
+                success: function () {
+                    location.reload();
+                }
+            });
+        });
+        $(function() {
+            $('#users').DataTable({
+                'paging': true,
+                'lengthChange': false,
+                'searching': true,
+                'ordering': true,
+                'info': true,
+                'autoWidth': false
+            });
+        });
+
+    </script>
+
+}
