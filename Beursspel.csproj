@@ -7,6 +7,7 @@
     <None Update="app.db" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="BuildBundlerMinifier" Version="2.6.362" />
     <PackageReference Include="Hangfire" Version="1.6.17" />
     <PackageReference Include="Hangfire.PostgreSql" Version="1.4.8.1" />
     <PackageReference Include="Markdig" Version="0.13.4" />
