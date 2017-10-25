@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Globalization;
 
 namespace Beursspel.Models.Beurzen
 {
@@ -12,8 +10,10 @@ namespace Beursspel.Models.Beurzen
         public int BeursId { get; set; }
         [Required]
         public string Naam { get; set; }
+        [DataType(DataType.MultilineText)]
         public string Omschrijving { get; set; }
-        public double HuidigeWaarde { get; set; }
+
+        public double HuidigeWaarde { get; set; } = Settings.StartBeursWaarde;
 
         public List<BeursWaardes> OudeWaardes { get; set; }
     }

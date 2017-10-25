@@ -1,0 +1,117 @@
+﻿@model List<Beursspel.Models.Beurzen.Beurs>
+
+@{
+    ViewBag.Title = "Beurzen";
+    Layout = "_Layout";
+}
+
+@section style
+{
+    <environment include="Development">
+        <link rel="stylesheet" href="~/lib/bootstrap-datatables/dataTables.bootstrap.css"/>
+    </environment>
+    <environment exclude="Development">
+        <link rel="stylesheet" href="~/lib/bootstrap-datatables/dataTables.bootstrap.min.css"/>
+    </environment>
+
+}
+
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box">
+            <div class="box-header">
+                <h3 class="box-title">Beurzen</h3>
+            </div>
+            <div class="box-body table-responsive">
+                <table id="beurzen-admin" class="table table-bordered table-hover ">
+                    <thead>
+                    <tr>
+                        <td>
+                            Id
+                        </td>
+                        <td>
+                            Naam
+                        </td>
+                        <td></td>
+                    </tr>
+                    </thead>
+                    @foreach (var beurs in Model)
+                    {
+                        <tr onclick="window.location.href = '@Url.Action("Beurs", new {id = beurs.BeursId})'">
+                            <td>
+                                @beurs.BeursId
+                            </td>
+                            <td>
+                                @beurs.Naam
+                            </td>
+                            <td>
+                                <button class="btn btn-danger delete_beurs" data-id="@beurs.BeursId">Verwijder</button>
+                            </td>
+                        </tr>
+                    }
+                </table>
+                <button class="btn btn-success" onclick="window.location.href = '@Url.Action("Beurs")'">
+                    Toevoegen
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal modal-danger fade" id="confirmDelete">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Bevestig</h4>
+            </div>
+            <div class="modal-body">
+                <p>Weet je zeker dat je deze beurs wilt verwijderen?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline pull-left" data-dismiss="modal">Annuleer</button>
+                <button type="button" id="bevestig" class="btn btn-outline">Bevestig</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+</div>
+
+@section scripts
+{
+    @await Html.PartialAsync("_DataTableScriptsPartial")
+    <script>
+        $(function() {
+            $('#beurzen-admin').DataTable({
+                'paging': true,
+                'lengthChange': false,
+                'searching': true,
+                'ordering': true,
+                'info': true,
+                'autoWidth': false
+            });
+        });
+        $('.delete_beurs').on('click',
+            function(e) {
+                e.stopPropagation();
+                var id = this.dataset.id;
+                $('#confirmDelete').modal({
+                    })
+                    .one('click',
+                        '#bevestig',
+                        function() {
+                            $.ajax({
+                                url: '@Url.Action("DeleteBeurs", "Admin")',
+                                type: "POST",
+                                data: {
+                                    id: id
+                                },
+                                success: function() {
+                                    location.reload();
+                                }
+                            });
+                        });
+            });
+    </script>
+}

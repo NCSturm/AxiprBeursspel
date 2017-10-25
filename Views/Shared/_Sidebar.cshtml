@@ -12,12 +12,20 @@
           <i class="fa fa-line-chart"></i> <span>Beurzen</span>
         </a>
       </li>
-      <li class="header">ADMIN</li>
-      <li>
-        <a href="@Url.Action("Users", "Admin")">
-          <i class="fa fa-dashboard"></i> <span>Gebruikers</span>
-        </a>
-      </li>
+      @if (User.IsInRole("Admin"))
+      {
+        <li class="header">ADMIN</li>
+        <li>
+          <a href="@Url.Action("Users", "Admin")">
+            <i class="fa fa-dashboard"></i> <span>Gebruikers</span>
+          </a>
+        </li>
+        <li>
+          <a href="@Url.Action("Beurzen", "Admin")">
+            <i class="fa fa-dashboard"></i> <span>Beurzen</span>
+          </a>
+        </li>
+      }
     </ul>
 </section>
 <!-- /.sidebar -->

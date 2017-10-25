@@ -1,0 +1,70 @@
+﻿@model Beursspel.Models.Beurzen.Beurs
+
+@{
+    if (Model == null)
+    {
+        ViewBag.Title = "Beurs Toevoegen";
+    }
+    else
+    {
+        ViewBag.Title = "Admin: " + Model.Naam;
+    }
+    Layout = "_Layout";
+}
+
+<div class="row">
+    <div class="col-xs-12 col-sm-6">
+        <div class="box">
+            <div class="box-header">
+                <h3 class="box-title">Bewerken</h3>
+            </div>
+            <div class="box-body">
+                <form method="post">
+                    <div class="form-group">
+                        <label asp-for="BeursId"></label>
+                        <input asp-for="BeursId" class="form-control" readonly="readonly"  />
+                        <span asp-validation-for="BeursId" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Naam"></label>
+                        <input asp-for="Naam" class="form-control"/>
+                        <span asp-validation-for="Naam" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Omschrijving"></label>
+                        <textarea asp-for="Omschrijving" class="form-control" id="omschrijving"></textarea>
+                        <span asp-validation-for="Omschrijving" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label>Voorvertoning</label>
+                        <p id="markdown-preview"></p>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="HuidigeWaarde"></label>
+                        <input asp-for="HuidigeWaarde" class="form-control"/>
+                        <span asp-validation-for="HuidigeWaarde" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-success">Opslaan</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts
+{
+    <script>
+        $(function() {
+            @if (Model != null)
+            {
+                @:$("#markdown-preview").html(markdownify('@Model.Omschrijving'));
+            }
+        });
+
+        $("#omschrijving").on('input',function(e) {
+            $("#markdown-preview").html(markdownify(e.target.value));
+        });
+    </script>
+}

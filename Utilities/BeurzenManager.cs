@@ -32,6 +32,29 @@ namespace Beursspel.Utilities
             }
         }
 
+        public static async Task AddBeurs(Beurs beurs)
+        {
+            if (_cached == null)
+                await CreateCache();
+            Debug.Assert(_cached != null, nameof(_cached) + " != null");
+            _cached.TryAdd(beurs.BeursId, beurs);
+        }
+
+        public static async Task ModifyBeurs(Beurs beurs)
+        {
+            if (_cached == null)
+                await CreateCache();
+            Debug.Assert(_cached != null, nameof(_cached) + " != null");
+            _cached[beurs.BeursId] = beurs;
+        }
+
+        public static void DeleteBeurs(int id)
+        {
+            if (_cached == null)
+                return;
+            _cached.TryRemove(id, out _);
+        }
+
         public static async Task<List<Beurs>> GetBeurzenAsync()
         {
             if (_cached == null)

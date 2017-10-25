@@ -6,9 +6,12 @@ using System.Threading.Tasks;
 using Beursspel.Data;
 using Beursspel.Models;
 using Beursspel.Models.AdminViewModels;
+using Beursspel.Models.Beurzen;
+using Beursspel.Utilities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Beursspel.Controllers
 {
@@ -82,6 +85,87 @@ namespace Beursspel.Controllers
         {
             var user = await _userManager.FindByIdAsync(data);
             await _userManager.RemoveFromRoleAsync(user, "Betaald");
+            return Ok();
+        }
+
+        public async Task<IActionResult> Beurzen()
+        {
+            var beurzen = await BeurzenManager.GetBeurzenAsync();
+            return View(beurzen);
+        }
+
+        public async Task<IActionResult> Beurs(string id)
+        {
+            if (id == null)
+            {
+                return View(null);
+            }
+            if (!int.TryParse(id, out var i))
+            {
+                return View(null);
+            }
+            var beurs = await BeurzenManager.GetBeursAsync(i);
+            return View(beurs);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Beurs(Beurs beurs)
+        {
+            var id = beurs.BeursId;
+            if (beurs.BeursId == 0)
+            {
+                id = await CreateBeurs(beurs);
+            }
+            else
+            {
+                await ModifyBeurs(beurs);
+            }
+            return RedirectToAction("Beurs", new {id = id});
+        }
+
+        private static async Task ModifyBeurs(Beurs beurs)
+        {
+            using (var db = new ApplicationDbContext())
+            {
+                var vorigeBeurs = await db.Beurzen.Include(x => x.OudeWaardes)
+                    .FirstOrDefaultAsync(x => x.BeursId == beurs.BeursId);
+                beurs.OudeWaardes = vorigeBeurs.OudeWaardes;
+
+                vorigeBeurs = beurs;
+                await db.SaveChangesAsync();
+            }
+            await BeurzenManager.ModifyBeurs(beurs);
+        }
+
+        private static async Task<int> CreateBeurs(Beurs beurs)
+        {
+            beurs.OudeWaardes = new List<BeursWaardes>();
+            using (var db = new ApplicationDbContext())
+            {
+                await db.Beurzen.AddAsync(beurs);
+                await db.SaveChangesAsync();
+            }
+            await BeurzenManager.AddBeurs(beurs);
+            return beurs.BeursId;
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DeleteBeurs(string id)
+        {
+            if (id == null)
+            {
+                return BadRequest();
+            }
+            if (!int.TryParse(id, out var i))
+            {
+                return BadRequest();
+            }
+            using (var db = new ApplicationDbContext())
+            {
+                db.Beurzen.Remove(db.Beurzen.Find(i));
+                await db.SaveChangesAsync();
+            }
+            BeurzenManager.DeleteBeurs(i);
             return Ok();
         }
     }
