@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
@@ -10,10 +10,14 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Beursspel.Data;
 using Beursspel.Models;
+using Beursspel.Models.AccountViewModels;
 using Beursspel.Services;
 using Beursspel.Tasks;
 using Hangfire;
+using Hangfire.Dashboard;
 using Hangfire.PostgreSql;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Beursspel
 {
@@ -26,6 +30,7 @@ namespace Beursspel
         public Startup(IConfiguration configuration)
         {
             Configuration = new ConfigurationBuilder()
+                .AddJsonFile("appsettings.json")
                 .AddUserSecrets<Startup>()
                 .Build();
 
@@ -38,6 +43,10 @@ namespace Beursspel
         public void ConfigureServices(IServiceCollection services)
         {
             var connectionString = Configuration["connectionString"];
+            if (connectionString == null)
+            {
+                connectionString = Configuration["prod:connectionString"];
+            }
             services.AddEntityFrameworkNpgsql()
                 .AddDbContext<ApplicationDbContext>(builder => builder.UseNpgsql(connectionString));
 
@@ -63,6 +72,13 @@ namespace Beursspel
 
             // Add application services.
             services.AddTransient<IEmailSender, EmailSender>();
+            services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+
+            services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromSeconds(10);
+                options.Cookie.HttpOnly = true;
+            });
 
             services.AddHangfire(x =>
             {
@@ -106,16 +122,17 @@ namespace Beursspel
                 app.UseExceptionHandler("/Home/Error");
             }
 
+
+            app.UseSession();
             app.UseHangfireServer();
-            app.UseHangfireDashboard();
 
             app.UseStaticFiles();
 
             app.UseAuthentication();
 
 
-            var types = AppDomain.CurrentDomain.GetAssemblies()
-                .SelectMany(x => x.GetTypes())
+
+            var types = Assembly.GetExecutingAssembly().GetTypes()
                 .Where(y => typeof(IRecurringTask).IsAssignableFrom(y));
             foreach (var type in types)
             {
@@ -136,6 +153,13 @@ namespace Beursspel
 
             var task = CreateRoles(serviceProvider);
             task.Wait();
+            var options = new DashboardOptions
+            {
+                Authorization = new []{new HangfireAuthentication()}
+            };
+            app.UseHangfireDashboard("/hangfire", options);
+
+
         }
     }
 }

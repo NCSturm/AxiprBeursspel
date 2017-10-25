@@ -58,6 +58,8 @@ namespace Beursspel.Controllers
             }
 
             int aantal = 0;
+            if (!User.Identity.IsAuthenticated)
+                return View(new BeursModel{Beurs = beurs, Aantal = 0});
             var gebruiker = await GetGebruikerWithAandelen(HttpContext);
             var ah = gebruiker.Aandelen?.FirstOrDefault(x => x.ApplicationUserId == gebruiker.Id && x.BeursId == index);
             if (ah != null)

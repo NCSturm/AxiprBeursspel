@@ -20,7 +20,7 @@
     <DotNetCliToolReference Include="Microsoft.Extensions.SecretManager.Tools" Version="2.0.0" />
     <DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="2.0.0" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="wwwroot\lib\Chart.Js" />
-  </ItemGroup>
+  <Target Name="CopyFiles" AfterTargets="build">
+    <Copy DestinationFolder="$(OutputPath)" SourceFiles="appsettings.json" SkipUnchangedFiles="false" />
+  </Target>
 </Project>
