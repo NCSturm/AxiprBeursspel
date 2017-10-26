@@ -72,20 +72,16 @@ namespace Beursspel.Controllers
             if (!User.Identity.IsAuthenticated)
                 return View(new BeursModel{Beurs = beurs, Aantal = 0});
 
-            return View(new BeursModel{Beurs = beurs, Aantal = await GetGebruikerAandelen(HttpContext, beurs)});
-        }
-
-        private static async Task<int> GetGebruikerAandelen(HttpContext context, Beurs beurs)
-        {
             var aantal = 0;
-            var gebruiker = await GetGebruikerWithAandelen(context);
+            var gebruiker = await GetGebruikerWithAandelen(HttpContext);
             var ah = gebruiker.Aandelen?.FirstOrDefault(x =>
                 x.ApplicationUserId == gebruiker.Id && x.BeursId == beurs.BeursId);
             if (ah != null)
                 aantal = ah.Aantal;
-            return aantal;
-        }
+            var geld = gebruiker.Geld;
 
+            return View(new BeursModel{Beurs = beurs, Aantal = aantal, GebruikerGeld = geld});
+        }
 
         private static async Task<Beurs> GetBeurs(int id)
         {

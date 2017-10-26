@@ -13,5 +13,6 @@ namespace Beursspel.Models.BeursViewModels
         public int BeursId { get; set; }
         [Display(Name = "Aantal")]
         public int Aantal { get; set; }
+        public double GebruikerGeld { get; set; }
     }
 }

@@ -20,7 +20,7 @@ namespace Beursspel.Tasks
                     var waarde = applicationUser.Geld + (from aandeelHouder in applicationUser.Aandelen
                                      let beurs = beurzen.FirstOrDefault(x => x.BeursId == aandeelHouder.BeursId)
                                      where beurs != null
-                                     select aandeelHouder.Aantal * beurs.HuidigeWaarde).Sum();
+                                     select aandeelHouder.Aantal * beurs.AandeelPrijs).Sum();
                     applicationUser.Waarde = waarde;
                 }
                 await db.SaveChangesAsync();

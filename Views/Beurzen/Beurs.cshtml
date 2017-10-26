@@ -103,7 +103,6 @@
             <div class="col-sm-12 col-lg-6">
                 <div class="info-box">
                     <span class="info-box-icon bg-blue"><i class="fa fa-shopping-cart"></i></span>
-
                     <div class="info-box-content">
                         <span class="info-box-text">Beschikbare Aandelen</span>
                         <span class="info-box-number">@Model.Beurs.BeschikbareAandelen</span>
@@ -138,7 +137,7 @@
                     <div class="form-group">
                         <input asp-for="BeursId" value="@Model.Beurs.BeursId" readonly="readonly" hidden/>
                         <label asp-for="Aantal"></label>
-                        <input asp-for="Aantal" class="form-control"/>
+                        <input asp-for="Aantal" class="form-control" id="koop-aantal-input"/>
                     </div>
                     <button type="submit" class="btn btn-success">Koop</button>
                 </form>
@@ -155,7 +154,6 @@
                     </div>
                     <button type="submit" class="btn btn-danger">Verkoop</button>
                 </form>
-
             </div>
         </div>
     </div>
@@ -190,6 +188,7 @@
             setGebruikerGeld();
             $("#beurs-omschrijving").html(markdownify("@Model.Beurs.Omschrijving"));
             setupbeurschart(chartLabels, chartData);
+            $("#koop-aantal-input").val(Math.floor(@Model.GebruikerGeld / @Model.Beurs.AandeelPrijs));
         }
 
     </script>
