@@ -103,7 +103,7 @@
 
     <script>
         $('.grant_admin').on('click', function (e) {
-
+            e.stopPropagation();
             $.ajax({
                 url: '@Url.Action("GrantAdmin", "Admin")',
                 type: "POST",
@@ -116,7 +116,7 @@
             });
         });
         $('.remove_admin').on('click', function (e) {
-
+            e.stopPropagation();
             $.ajax({
                 url: '@Url.Action("RemoveAdmin", "Admin")',
                 type: "POST",
@@ -129,7 +129,7 @@
             });
         });
         $('.grant_tapper').on('click', function (e) {
-
+            e.stopPropagation();
             $.ajax({
                 url: '@Url.Action("GrantTapper", "Admin")',
                 type: "POST",
@@ -143,7 +143,7 @@
 
         });
         $('.remove_tapper').on('click', function (e) {
-
+            e.stopPropagation();
             $.ajax({
                 url: '@Url.Action("RemoveTapper", "Admin")',
                 type: "POST",
@@ -156,7 +156,7 @@
             });
         });
         $('.grant_betaald').on('click', function (e) {
-
+            e.stopPropagation();
             $.ajax({
                 url: '@Url.Action("GrantBetaald", "Admin")',
                 type: "POST",
@@ -170,7 +170,7 @@
 
         });
         $('.remove_betaald').on('click', function (e) {
-
+            e.stopPropagation();
             $.ajax({
                 url: '@Url.Action("RemoveBetaald", "Admin")',
                 type: "POST",
