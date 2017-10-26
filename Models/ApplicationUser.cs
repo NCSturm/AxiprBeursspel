@@ -31,6 +31,9 @@ namespace Beursspel.Models
 
         public double Waarde { get; set; }
 
+        public virtual List<AandeelHouder> Aandelen { get; set; }
+
+
         /// <summary>
         /// Cache voor geld, aangezien die waarde overal wordt gebruikt.
         /// </summary>
@@ -55,7 +58,6 @@ namespace Beursspel.Models
             SpelersGeld.TryAdd(Id, Geld);
         }
 
-        public List<AandeelHouder> Aandelen { get; set; }
 
         public async Task KoopAandelen(Beurs beurs, int aantal)
         {

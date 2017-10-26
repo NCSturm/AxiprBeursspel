@@ -44,7 +44,7 @@
                     </thead>
                     @foreach (var user in Model)
                     {
-                        <tr>
+                        <tr onclick="window.location.href = '@Url.Action("Gebruiker", new {id = user.UserId})'">
                             <td>
                                 @user.Username
                             </td>

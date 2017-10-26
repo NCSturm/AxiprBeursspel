@@ -1,0 +1,126 @@
+﻿@using Beursspel.Models.AdminViewModels
+@using Beursspel.Utilities
+@model Beursspel.Models.AdminViewModels.GebruikerModel
+
+@{
+    ViewBag.Title = "Admin: " + Model.User.Naam;
+    Layout = "_Layout";
+}
+
+<div class="row">
+    <div class="col-xs-12 col-sm-6">
+        <div class="box">
+            <div class="box-header">
+                <h3 class="box-title">Gegevens</h3>
+            </div>
+            <div class="box-body">
+                <form>
+                    <div class="form-group">
+                        <label asp-for="User.Naam"></label>
+                        <input asp-for="User.Naam" class="form-control" readonly="readonly"  />
+                        <span asp-validation-for="User.Naam" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label >Gebruikersnaam</label>
+                        <input asp-for="User.UserName" class="form-control" readonly="readonly"  />
+                        <span asp-validation-for="User.UserName" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="User.Geld"></label>
+                        <input asp-for="User.Geld" class="form-control" readonly="readonly"  />
+                        <span asp-validation-for="User.Geld" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="User.Waarde"></label>
+                        <input asp-for="User.Waarde" class="form-control" readonly="readonly"  />
+                        <span asp-validation-for="User.Waarde" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label>Aandelen</label>
+                        <table class="table">
+                            <thead>
+                            <tr>
+                                <th>Beurs</th>
+                                <th>Aantal</th>
+                            </tr>
+                            </thead>
+                            @foreach (var aandeel in Model.User.Aandelen)
+                            {
+                                <tr>
+                                    <td>@Model.BeursNamen[aandeel.BeursId]</td>
+                                    <td>@aandeel.Aantal</td>
+                                </tr>
+                            }
+                        </table>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-xs-12 col-sm-6">
+        <div class="box">
+            <div class="box-header">
+                <h3 class="box-title">Acties</h3>
+            </div>
+            <div class="box-body">
+                <form class="form-inline" id="modify_money">
+                    <h4>Verander Geld.</h4>
+                    <div class="form-group">
+                        <input class="form-control" type="number" id="modify_money_input"/>
+                    </div>
+                    <button type="submit" class="btn btn-default">Verander</button>
+                </form>
+                <form class="form-inline" id="modify_stocks">
+                    <h4>Verander Aandelen.</h4>
+                    <div class="form-group">
+                        <select class="form-control" id="modify_stocks_beurs"
+                                asp-items="@((await BeurzenManager.GetBeurzenAsync()).Select(x => new SelectListItem()
+                                             {Text = x.Naam, Value = x.BeursId.ToString()}))"></select>
+                    </div>
+                    <div class="form-group">
+                        <input class="form-control" type="number" id="modify_stocks_number"/>
+
+                    </div>
+
+                    <button type="submit" class="btn btn-default">Verander</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script>
+        $("#modify_money").submit(function( event ) {
+            event.preventDefault();
+            $.ajax({
+                url: '@Url.Action("ModifyMoney", "Admin")',
+                type: "POST",
+                data: {
+                    id: '@Model.User.Id',
+                    verschil: $('#modify_money_input').val()
+                },
+                success: function () {
+                    location.reload();
+                }
+            });
+        });
+        $("#modify_stocks").submit(function( event ) {
+            event.preventDefault();
+            $.ajax({
+                url: '@Url.Action("ModifyStocks", "Admin")',
+                type: "POST",
+                data: {
+                    id: '@Model.User.Id',
+                    beurs: $('#modify_stocks_beurs').val(),
+                    verschil: $('#modify_stocks_number').val()
+                },
+                success: function () {
+                    location.reload();
+                }
+            });
+
+        });
+
+    </script>
+}
