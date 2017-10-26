@@ -1,5 +1,4 @@
-﻿@using System.Runtime.InteropServices.ComTypes
-@model Beursspel.Models.BeursViewModels.BeursModel
+﻿@model Beursspel.Models.BeursViewModels.BeursModel
 
 @{
     ViewBag.Title = Model.Beurs.Naam;
@@ -33,8 +32,10 @@
     </div>
 </div>
 <div class="row">
-    <div class="col-md-3 col-sm-6 col-xs-12">
-        <div class="row" style="padding-right: 15px;padding-left: 15px; padding-top: 2px;">
+    <div class="col-md-6 col-sm-12 col-xs-12">
+        <div class="row" style="padding-right: 15px; padding-left: 15px; padding-top: 2px;">
+            <div class="col-sm-12 col-lg-6">
+
                 @{
                     var eerste = @Model.Beurs.OudeWaardes.FirstOrDefault();
                     if (eerste != null)
@@ -42,8 +43,8 @@
                         var verschilWaardes = Model.Beurs.HuidigeWaarde - eerste.Waarde;
                         var diff = (verschilWaardes / eerste.Waarde);
                         var dagen = (int) (DateTime.Now - eerste.Tijd).TotalDays;
-                        var color = diff > 0 ? "green" : "red";
-                        var icon = diff > 0 ? "thumbs-o-up" : "thumbs-o-down";
+                        var color = diff >= 0 ? "green" : "red";
+                        var icon = diff >= 0 ? "thumbs-o-up" : "thumbs-o-down";
                         <div class="info-box bg-@color">
                             <span class="info-box-icon"><i class="fa fa-@icon"></i></span>
 
@@ -89,17 +90,35 @@
                         </div>
                     }
                 }
+                <div class="info-box bg-orange">
+                    <span class="info-box-icon "><i class="fa fa-money"></i></span>
+
+                    <div class="info-box-content">
+                        <span class="info-box-text">Prijs per Aandeel</span>
+                        <span class="info-box-number">@Model.Beurs.AandeelPrijs</span>
+                    </div>
+                </div>
+
+            </div>
+            <div class="col-sm-12 col-lg-6">
                 <div class="info-box">
-                    <span class="info-box-icon bg-blue"><i class="fa fa-star-o"></i></span>
+                    <span class="info-box-icon bg-blue"><i class="fa fa-shopping-cart"></i></span>
+
+                    <div class="info-box-content">
+                        <span class="info-box-text">Beschikbare Aandelen</span>
+                        <span class="info-box-number">@Model.Beurs.BeschikbareAandelen</span>
+                    </div>
+                </div>
+                <div class="info-box">
+                    <span class="info-box-icon bg-green"><i class="fa fa-pie-chart"></i></span>
 
                     <div class="info-box-content">
                         <span class="info-box-text">Jouw Aandelen</span>
                         <span class="info-box-number">@Model.Aantal</span>
                     </div>
-                    <!-- /.info-box-content -->
-                </div>        <!-- /.info-box -->
+                </div>
 
-
+            </div>
         </div>
         <!-- small box -->
     </div>
@@ -110,9 +129,12 @@
                 <h3 class="box-title">Handel</h3>
             </div>
             <div class="box-body">
-                <div asp-validation-summary="All" class="text-danger"></div>
                 <form asp-action="KoopAandelen" class="form-inline">
                     <h4>Koop aandelen.</h4>
+                    @if (ViewData.ModelState.Keys.Any(x => x == "Koopfout"))
+                    {
+                        @Html.ValidationSummary(false, "Koopfout", new { @class = "text-danger" })
+                    }
                     <div class="form-group">
                         <input asp-for="BeursId" value="@Model.Beurs.BeursId" readonly="readonly" hidden/>
                         <label asp-for="Aantal"></label>
@@ -122,6 +144,10 @@
                 </form>
                 <form asp-action="VerkoopAandelen" class="form-inline">
                     <h4>Verkoop aandelen.</h4>
+                    @if (ViewData.ModelState.Keys.Any(x => x == "Verkoopfout"))
+                    {
+                        @Html.ValidationSummary(false, "Verkoopfout", new { @class = "text-danger" })
+                    }
                     <div class="form-group">
                         <input asp-for="BeursId" value="@Model.Beurs.BeursId" readonly="readonly" hidden/>
                         <label asp-for="Aantal"></label>
@@ -165,6 +191,7 @@
             $("#beurs-omschrijving").html(markdownify("@Model.Beurs.Omschrijving"));
             setupbeurschart(chartLabels, chartData);
         }
+
     </script>
 
 }

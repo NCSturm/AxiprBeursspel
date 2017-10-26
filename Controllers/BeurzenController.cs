@@ -7,7 +7,6 @@ using Beursspel.Models;
 using Beursspel.Models.BeursViewModels;
 using Beursspel.Models.Beurzen;
 using Beursspel.Utilities;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -31,65 +30,69 @@ namespace Beursspel.Controllers
             return View(beurzen);
         }
 
-        private async Task<ApplicationUser> GetGebruikerWithAandelen(HttpContext httpContext)
+        private static async Task<ApplicationUser> GetGebruikerWithAandelen(HttpContext httpContext)
         {
-            ApplicationUser gebruiker = null;
+            ApplicationUser gebruiker;
             using (var db = new ApplicationDbContext())
             {
-                gebruiker = db.Users.Include(x => x.Aandelen).FirstOrDefault(x => x.Id == httpContext.User.GetUserId());
+                gebruiker = await db.Users.Include(x => x.Aandelen)
+                    .SingleAsync(x => x.Id == httpContext.User.GetUserId());
             }
             return gebruiker;
         }
 
         public async Task<IActionResult> Beurs(string id)
         {
+            var errors = TempData.Get<List<string>>("errors");
+            if (errors != null)
+            {
+                var errorType = TempData.Get<string>("errorType");
+                foreach (var error in errors)
+                {
+                    ModelState.AddModelError(errorType, error);
+                }
+            }
             if (string.IsNullOrEmpty(id))
             {
                 return RedirectToAction("Index");
             }
+            Beurs beurs;
             if (!int.TryParse(id, out var index))
             {
-                return await BeursNaam(id);
+                beurs = await BeurzenManager.GetBeursMetNaamAsync(id);
             }
-            var beurs = await GetBeurs(index);
+            else
+            {
+                beurs = await GetBeurs(index);
+            }
             if (beurs == null)
             {
                 return StatusCode(404);
             }
-
-            int aantal = 0;
             if (!User.Identity.IsAuthenticated)
                 return View(new BeursModel{Beurs = beurs, Aantal = 0});
-            var gebruiker = await GetGebruikerWithAandelen(HttpContext);
-            var ah = gebruiker.Aandelen?.FirstOrDefault(x => x.ApplicationUserId == gebruiker.Id && x.BeursId == index);
+
+            return View(new BeursModel{Beurs = beurs, Aantal = await GetGebruikerAandelen(HttpContext, beurs)});
+        }
+
+        private static async Task<int> GetGebruikerAandelen(HttpContext context, Beurs beurs)
+        {
+            var aantal = 0;
+            var gebruiker = await GetGebruikerWithAandelen(context);
+            var ah = gebruiker.Aandelen?.FirstOrDefault(x =>
+                x.ApplicationUserId == gebruiker.Id && x.BeursId == beurs.BeursId);
             if (ah != null)
                 aantal = ah.Aantal;
-
-            return View(new BeursModel{Beurs = beurs, Aantal = aantal});
+            return aantal;
         }
+
 
         private static async Task<Beurs> GetBeurs(int id)
         {
             return await BeurzenManager.GetBeursAsync(id);
         }
 
-        public async Task<IActionResult> BeursNaam(string naam)
-        {
-            Beurs beurs;
-            using (var context = new ApplicationDbContext())
-            {
-                naam = naam.ToLowerInvariant();
-                beurs = await (from x in context.Beurzen
-                    where x.Naam.ToLower() == naam
-                    select x).FirstOrDefaultAsync();
-            }
-            if (beurs == null)
-            {
-                return StatusCode(404);
-            }
-            return View("Beurs", new BeursModel{Beurs = beurs});
-        }
-
+        [HttpPost]
         public async Task<IActionResult> KoopAandelen(BeursModel model)
         {
             var gebruiker = await _userManager.GetCurrentUser(HttpContext);
@@ -104,7 +107,7 @@ namespace Beursspel.Controllers
 
             var errors = new List<string>();
 
-            var modelValue = model.Aantal * model.Beurs.HuidigeWaarde;
+            var modelValue = model.Aantal * model.Beurs.AandeelPrijs;
             if (model.Aantal <= 0)
             {
                 errors.Add("Je moet tenminste 1 aandeel kopen");
@@ -118,16 +121,12 @@ namespace Beursspel.Controllers
             {
                 await gebruiker.KoopAandelen(model.Beurs, model.Aantal);
             }
-            else
-            {
-                foreach (var error in errors)
-                {
-                    ModelState.AddModelError(string.Empty, error);
-                }
-            }
-            return RedirectToAction("Beurs", new {id = model.BeursId});
+            TempData.Put("errors", errors);
+            TempData.Put("errorType", "Koopfout");
+            return RedirectToAction("Beurs", new {id = model.Beurs.BeursId});
         }
 
+        [HttpPost]
         public async Task<IActionResult> VerkoopAandelen(BeursModel model)
         {
             var gebruiker = await GetGebruikerWithAandelen(HttpContext);
@@ -143,11 +142,10 @@ namespace Beursspel.Controllers
             var errors = new List<string>();
             if (gebruiker.Aandelen == null)
             {
-                ModelState.AddModelError(string.Empty, "Je hebt hier niet genoeg aandelen in deze beurs voor");
+                ModelState.AddModelError("Verkoopfout", "Je hebt hier niet genoeg aandelen in deze beurs voor");
                 return RedirectToAction("Beurs", new {id = model.BeursId});
             }
 
-            var modelValue = model.Aantal * model.Beurs.HuidigeWaarde;
             var aandeelHouder =
                 gebruiker.Aandelen.FirstOrDefault(x => x.BeursId == model.BeursId && x.ApplicationUserId == gebruiker.Id);
             if (model.Aantal <= 0)
@@ -163,15 +161,9 @@ namespace Beursspel.Controllers
             {
                 await gebruiker.VerkoopAandelen(model.Beurs, model.Aantal);
             }
-            else
-            {
-                foreach (var error in errors)
-                {
-                    ModelState.AddModelError(string.Empty, error);
-                }
-            }
-            return RedirectToAction("Beurs", new {id = model.BeursId});
-
+            TempData.Put("errors", errors);
+            TempData.Put("errorType", "Verkoopfout");
+            return RedirectToAction("Beurs", new {id = model.Beurs.BeursId});
         }
     }
 }

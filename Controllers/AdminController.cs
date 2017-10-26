@@ -240,6 +240,7 @@ namespace Beursspel.Controllers
             using (var db = new ApplicationDbContext())
             {
                 db.Beurzen.Remove(db.Beurzen.Find(i));
+                db.Aandelen.RemoveRange(db.Aandelen.Where(x => x.BeursId == i));
                 await db.SaveChangesAsync();
             }
             BeurzenManager.DeleteBeurs(i);

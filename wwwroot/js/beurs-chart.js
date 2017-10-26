@@ -18,7 +18,7 @@ function setupbeurschart(chartLabels, chartData) {
             options: {
                 responsive: true,
                 legend: {
-                    display: false,
+                    display: false
                 },
                 scales: {
                     xAxes: [{

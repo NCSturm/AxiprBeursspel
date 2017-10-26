@@ -14,6 +14,23 @@
       </li>
       @if (User.IsInRole("Admin"))
       {
+        <li class="header">TELMOMENTEN</li>
+        <li>
+          <a href="@Url.Action("Index", "TelMoment")">
+            <i class="fa fa-dashboard"></i> <span>Afgelopen</span>
+          </a>
+        </li>
+        <li>
+          <a href="@Url.Action("Moment", "TelMoment")">
+            <i class="fa fa-dashboard"></i> <span>Toevoegen</span>
+          </a>
+        </li>
+        <li>
+          <a href="@Url.Action("Moment", "TelMoment")">
+            <i class="fa fa-dashboard"></i> <span>Gepland</span>
+          </a>
+        </li>
+
         <li class="header">ADMIN</li>
         <li>
           <a href="@Url.Action("Gebruikers", "Admin")">

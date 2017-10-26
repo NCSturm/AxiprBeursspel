@@ -11,9 +11,10 @@ using System;
 namespace Beursspel.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20171026121645_5")]
+    partial class _5
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -129,44 +130,6 @@ namespace Beursspel.Migrations
                     b.HasIndex("BeursId");
 
                     b.ToTable("BeursWaardes");
-                });
-
-            modelBuilder.Entity("Beursspel.Models.TelMomentModels.TelMomentHouder", b =>
-                {
-                    b.Property<int>("TelMomentHouderId")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<string>("Bewerker");
-
-                    b.Property<string>("Invoerder");
-
-                    b.Property<DateTime>("LaatstBewerkt");
-
-                    b.Property<DateTime>("Tijd");
-
-                    b.HasKey("TelMomentHouderId");
-
-                    b.ToTable("TelMomenten");
-                });
-
-            modelBuilder.Entity("Beursspel.Models.TelMomentModels.TelMomentModel", b =>
-                {
-                    b.Property<int>("TelMomentModelId")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<int>("Aantal");
-
-                    b.Property<int>("BeursId");
-
-                    b.Property<string>("BeursNaam");
-
-                    b.Property<int?>("TelMomentHouderId");
-
-                    b.HasKey("TelMomentModelId");
-
-                    b.HasIndex("TelMomentHouderId");
-
-                    b.ToTable("TelMomentModel");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -289,13 +252,6 @@ namespace Beursspel.Migrations
                         .WithMany("OudeWaardes")
                         .HasForeignKey("BeursId")
                         .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("Beursspel.Models.TelMomentModels.TelMomentModel", b =>
-                {
-                    b.HasOne("Beursspel.Models.TelMomentModels.TelMomentHouder")
-                        .WithMany("Beurzen")
-                        .HasForeignKey("TelMomentHouderId");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

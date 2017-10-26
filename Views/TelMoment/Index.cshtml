@@ -1,7 +1,8 @@
-﻿@model List<Beursspel.Models.Beurzen.Beurs>
+﻿@using Beursspel.Models.TelMomentModels
+@model List<TelMomentHouder>
 
 @{
-    ViewBag.Title = "Beurzen";
+    ViewBag.Title = "Telmomenten";
     Layout = "_Layout";
 }
 
@@ -17,51 +18,55 @@
 }
 
 <div class="row">
-    <div class="col-xs-12">
+    <div class="col-xs-12 col-sm-8">
         <div class="box">
             <div class="box-header">
-                <h3 class="box-title">Beurzen</h3>
+                <h3 class="box-title">Momenten</h3>
             </div>
             <div class="box-body table-responsive">
-                <table id="beurzen" class="table table-bordered table-hover">
+                <table class="table" id="momenten-table">
                     <thead>
                     <tr>
-                        <th>Beursnaam</th>
-                        <th>Waarde</th>
+                        <th>Moment</th>
+                        <th>Invoerder</th>
+                        <th>Laatst Bewerkt</th>
+                        <th>Bewerker</th>
                     </tr>
                     </thead>
-                    <tbody>
-                    @foreach (var beurs in Model)
+                    @foreach (var moment in Model)
                     {
-                        <tr onclick="window.document.location='/Beurzen/Beurs/@beurs.BeursId'" style="cursor: pointer">
-                            <td>
-                                @beurs.Naam
-                            </td>
-                            <td>
-                                @beurs.HuidigeWaarde
-                            </td>
+                        <tr onclick="window.location.href = '@Url.Action("Moment", new {id = @moment.TelMomentHouderId})'"
+                            style="cursor: pointer;">
+                            <td>@moment.Tijd.ToString("U")</td>
+                            <td>@moment.Invoerder</td>
+                            @if (moment.LaatstBewerkt != default(DateTime))
+                            {
+                                <td>@moment.LaatstBewerkt.ToString("U")</td>
+                            }
+                            <td>@moment.Bewerker</td>
                         </tr>
                     }
-                    </tbody>
                 </table>
+                <button class="btn btn-success" onclick="window.location.href = '@Url.Action("Moment")'">
+                    Toevoegen
+                </button>
             </div>
         </div>
     </div>
 </div>
-
 @section scripts
 {
+    @await Html.PartialAsync("_DataTableScriptsPartial")
     <script>
-        $(function () {
-            $('#beurzen').DataTable({
+        $(function() {
+            $('#momenten-table').DataTable({
                 'paging': true,
                 'lengthChange': false,
                 'searching': true,
                 'ordering': true,
                 'info': true,
                 'autoWidth': false,
-                "order": [[1, "desc"]],
-                language: {
+                'language': {
                     "sProcessing": "Bezig...",
                     "sLengthMenu": "_MENU_ resultaten weergeven",
                     "sZeroRecords": "Geen resultaten gevonden",
@@ -85,7 +90,6 @@
                     }
                 }
             });
-        })
+        });
     </script>
-    @await Html.PartialAsync("_DataTableScriptsPartial")
 }

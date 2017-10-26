@@ -41,8 +41,23 @@
                     </div>
                     <div class="form-group">
                         <label asp-for="HuidigeWaarde"></label>
-                        <input asp-for="HuidigeWaarde" class="form-control"/>
+                        @{ var value = Settings.StartBeursWaarde; }
+                        @if (Model != null)
+                        {
+                            value = Model.HuidigeWaarde;
+                        }
+                        <input asp-for="HuidigeWaarde" class="form-control" value="@value"/>
                         <span asp-validation-for="HuidigeWaarde" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="BeschikbareAandelen"></label>
+                        @{ var aantal = Settings.StartBeursBeschikbareAandelen; }
+                        @if (Model != null)
+                        {
+                            aantal = Model.BeschikbareAandelen;
+                        }
+                        <input asp-for="BeschikbareAandelen" class="form-control" value="@aantal"/>
+                        <span asp-validation-for="BeschikbareAandelen" class="text-danger"></span>
                     </div>
                     <div class="form-group">
                         <button type="submit" class="btn btn-success">Opslaan</button>

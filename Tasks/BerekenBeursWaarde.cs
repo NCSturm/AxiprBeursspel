@@ -10,7 +10,7 @@ namespace Beursspel.Tasks
     public class BerekenBeursWaarde : IRecurringTask
     {
         public string Cron => "*/5 * * * *";
-        public bool Enabled => true;
+        public bool Enabled => false;
         public async Task ExecuteAsync()
         {
             using (var db = new ApplicationDbContext())

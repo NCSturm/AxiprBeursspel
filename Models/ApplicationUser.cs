@@ -64,8 +64,9 @@ namespace Beursspel.Models
             using (var db = new ApplicationDbContext())
             {
                 db.Attach(this);
+                db.Attach(beurs);
                 await db.Entry(this).Collection(x => x.Aandelen).LoadAsync();
-                var kosten = beurs.HuidigeWaarde * aantal;
+                var kosten = beurs.AandeelPrijs * aantal;
                 if (kosten > Geld)
                 {
                     return;
@@ -93,6 +94,7 @@ namespace Beursspel.Models
                 {
                     aandeelHouder.Aantal += aantal;
                 }
+                beurs.BeschikbareAandelen -= aantal;
                 await db.SaveChangesAsync();
             }
         }
@@ -102,8 +104,9 @@ namespace Beursspel.Models
             using (var db = new ApplicationDbContext())
             {
                 db.Attach(this);
+                db.Attach(beurs);
                 await db.Entry(this).Collection(x => x.Aandelen).LoadAsync();
-                var kosten = beurs.HuidigeWaarde * aantal;
+                var kosten = beurs.AandeelPrijs * aantal;
                 Geld += kosten;
 
                 var aandeelHouder = Aandelen.FirstOrDefault(
@@ -111,6 +114,7 @@ namespace Beursspel.Models
                 );
                 if (aandeelHouder != null)
                     aandeelHouder.Aantal -= aantal;
+                beurs.BeschikbareAandelen += aantal;
                 await db.SaveChangesAsync();
             }
 

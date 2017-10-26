@@ -101,9 +101,9 @@ namespace Beursspel.Controllers
         }
 
         [HttpPost]
-        public async Task<double> GetGebruikerGeld()
+        public async Task<string> GetGebruikerGeld()
         {
-            return await ApplicationUser.GetCachedGeld(User, _userManager, HttpContext);
+            return (await ApplicationUser.GetCachedGeld(User, _userManager, HttpContext)).ToString("F2");
         }
 
         [HttpPost]

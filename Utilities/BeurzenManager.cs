@@ -74,5 +74,17 @@ namespace Beursspel.Utilities
             Debug.Assert(_cached != null, nameof(_cached) + " != null");
             return _cached.TryGetValue(id, out var beurs) ? beurs : null;
         }
+
+        public static async Task<Beurs> GetBeursMetNaamAsync(string naam)
+        {
+            if (_cached == null)
+            {
+                await CreateCache();
+            }
+            Debug.Assert(_cached != null, nameof(_cached) + " != null");
+            return _cached
+                .FirstOrDefault(x => string.Equals(x.Value.Naam, naam, StringComparison.CurrentCultureIgnoreCase))
+                .Value;
+        }
     }
 }

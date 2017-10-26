@@ -11,9 +11,10 @@ using System;
 namespace Beursspel.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20171026145816_6")]
+    partial class _6
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -136,11 +137,7 @@ namespace Beursspel.Migrations
                     b.Property<int>("TelMomentHouderId")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<string>("Bewerker");
-
                     b.Property<string>("Invoerder");
-
-                    b.Property<DateTime>("LaatstBewerkt");
 
                     b.Property<DateTime>("Tijd");
 
