@@ -14,6 +14,8 @@ using Beursspel.Models;
 using Beursspel.Models.AccountViewModels;
 using Beursspel.Services;
 using Beursspel.Utilities;
+using Microsoft.EntityFrameworkCore;
+using Npgsql;
 
 namespace Beursspel.Controllers
 {
@@ -120,7 +122,25 @@ namespace Beursspel.Controllers
                     Naam = model.Naam,
                     Geld = Settings.StartSpelerGeld
                 };
-                var result = await _userManager.CreateAsync(user, model.Password);
+                IdentityResult result;
+                try
+                {
+                    result = await _userManager.CreateAsync(user, model.Password);
+                }
+                catch (DbUpdateException e)
+                {
+                    if (e.InnerException is PostgresException postgresexc && postgresexc.SqlState == "23505")
+                    {
+                        result = IdentityResult.Failed(new IdentityError
+                        {
+                            Description = "Een gebruiker met die naam is al geregistreerd"
+                        });
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User created a new account with password.");

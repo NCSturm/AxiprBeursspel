@@ -36,6 +36,9 @@ namespace Beursspel.Data
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
+            builder.Entity<ApplicationUser>()
+                .HasIndex(x => x.Naam)
+                .IsUnique();
             builder.Entity<Beurs>().ToTable("Beurzen");
             builder.Entity<AandeelHouder>().ToTable("AandeelHouder");
         }
