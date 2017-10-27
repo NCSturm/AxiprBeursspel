@@ -14,7 +14,6 @@ using Beursspel.Models.AccountViewModels;
 using Beursspel.Services;
 using Beursspel.Tasks;
 using Hangfire;
-using Hangfire.Dashboard;
 using Hangfire.PostgreSql;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -37,32 +36,32 @@ namespace Beursspel
             Configuration = configuration;
         }
 
-        public IConfiguration Configuration { get; }
+        private IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            var connectionString = Configuration["connectionString"];
-            if (connectionString == null)
-            {
-                connectionString = Configuration["prod:connectionString"];
-            }
+            var connectionString = Configuration["connectionString"] ?? Configuration["prod:connectionString"];
             services.AddEntityFrameworkNpgsql()
                 .AddDbContext<ApplicationDbContext>(builder => builder.UseNpgsql(connectionString));
 
 
             services.AddIdentity<ApplicationUser, IdentityRole>(x =>
                 {
-                    x.Password.RequireDigit = false;
+                    //Relevant
                     x.Password.RequiredLength = 10;
+                    //minder relevant
+                    x.Password.RequireDigit = false;
                     x.Password.RequiredUniqueChars = 0;
                     x.Password.RequireLowercase = false;
                     x.Password.RequireNonAlphanumeric = false;
                     x.Password.RequireUppercase = false;
+                    //Om brute forcing te voorkomen, blokkeren we een account tijdelijk als er te vaak een verkeerd
+                    //wachtwoord wordt ingevoerd. 10 verkeerde logins blokkeert voor 2 minuten
                     x.Lockout = new LockoutOptions
                     {
                         AllowedForNewUsers = true,
-                        DefaultLockoutTimeSpan = TimeSpan.FromMinutes(1),
+                        DefaultLockoutTimeSpan = TimeSpan.FromMinutes(2),
                         MaxFailedAccessAttempts = 10
                     };
                 })
@@ -96,18 +95,16 @@ namespace Beursspel
 
         }
 
-        private async Task CreateRoles(IServiceProvider serviceProvider)
+        private static async Task CreateRoles(IServiceProvider serviceProvider)
         {
             var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-            var userManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
             foreach (var existingRole in ExistingRoles)
             {
-                await CreateRoleWithName(existingRole, roleManager, userManager);
+                await CreateRoleWithName(existingRole, roleManager);
             }
         }
 
-        private async Task CreateRoleWithName(string name, RoleManager<IdentityRole> roleManager,
-            UserManager<ApplicationUser> userManager)
+        private static async Task CreateRoleWithName(string name, RoleManager<IdentityRole> roleManager)
         {
             var roleExists = await roleManager.RoleExistsAsync(name);
             if (!roleExists)

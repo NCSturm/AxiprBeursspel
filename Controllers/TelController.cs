@@ -33,7 +33,7 @@ namespace Beursspel.Controllers
                     moment.Beurzen.Add(new TelMomentModel
                     {
                         BeursId = beurs.BeursId,
-                        BeursNaam = beurs.Naam
+                        BeursNaam = beurs.Naam,
                     });
                 }
                 return View(moment);
@@ -52,11 +52,16 @@ namespace Beursspel.Controllers
             {
                 model.Invoerder = User.Identity.Name;
                 model.Tijd = DateTime.Now;
+                foreach (var telMomentModel in model.Beurzen)
+                {
+                    telMomentModel.Tijd = model.Tijd;
+                }
                 using (var db = new ApplicationDbContext())
                 {
                     await db.TelMomenten.AddAsync(model);
                     await db.SaveChangesAsync();
                 }
+                await Berekeningen.Aanwezigheid.BerekenBeurzen(model);
             }
             else
             {

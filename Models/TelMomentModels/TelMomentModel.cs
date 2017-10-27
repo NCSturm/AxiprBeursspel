@@ -9,6 +9,7 @@ namespace Beursspel.Models.TelMomentModels
 
         public int BeursId { get; set; }
         public string BeursNaam { get; set; }
+        public DateTime Tijd { get; set; }
         public int Aantal { get; set; }
     }
 

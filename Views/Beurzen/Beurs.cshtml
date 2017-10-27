@@ -37,7 +37,7 @@
             <div class="col-sm-12 col-lg-6">
 
                 @{
-                    var eerste = @Model.Beurs.OudeWaardes.FirstOrDefault();
+                    var eerste = @Model.Beurs.Waardes.FirstOrDefault();
                     if (eerste != null)
                     {
                         var verschilWaardes = Model.Beurs.HuidigeWaarde - eerste.Waarde;
@@ -173,16 +173,14 @@
     <script>
         var chartLabels = [];
         var chartData = [];
-        @if (Model.Beurs.OudeWaardes != null)
+        @if (Model.Beurs.Waardes != null)
         {
-            foreach (var oudeWaarde in Model.Beurs.OudeWaardes)
+            foreach (var oudeWaarde in Model.Beurs.Waardes)
             {
                 @:chartLabels.push('@oudeWaarde.Tijd.Date.ToString("dd/MM")');
                             @:chartData.push('@oudeWaarde.Waarde');
             }
         }
-        chartLabels.push('@DateTime.Now.Date.ToString("dd/MM")');
-        chartData.push('@Model.Beurs.HuidigeWaarde');
 
         window.onload = function() {
             setGebruikerGeld();

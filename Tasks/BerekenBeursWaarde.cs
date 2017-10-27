@@ -13,6 +13,7 @@ namespace Beursspel.Tasks
         public bool Enabled => false;
         public async Task ExecuteAsync()
         {
+            return;
             using (var db = new ApplicationDbContext())
             {
                 var beurzen = await BeurzenManager.GetBeurzenAsync();
@@ -21,25 +22,23 @@ namespace Beursspel.Tasks
                     db.Attach(beurs);
 
                     var oudeWaarde = beurs.HuidigeWaarde;
+                    var nieuweWaarde = oudeWaarde + new Random().Next(-30, 30);
+                    if (nieuweWaarde < 1)
+                    {
+                        nieuweWaarde = 1;
+                    }
                     var dag = DateTime.Now;
                     var w = new BeursWaardes()
                     {
                         Beurs = beurs,
                         BeursId = beurs.BeursId,
                         Tijd = dag,
-                        Waarde = oudeWaarde
+                        Waarde = nieuweWaarde,
+                        Type = BeursWaardes.WaardeType.Onbekend
                     };
-                    if (beurs.OudeWaardes == null)
-                        beurs.OudeWaardes = new List<BeursWaardes>();
-                    beurs.OudeWaardes.Add(w);
-                    beurs.HuidigeWaarde = beurs.HuidigeWaarde += (new Random().Next(-30, 30));
-                    if (beurs.HuidigeWaarde < 1)
-                    {
-                        beurs.HuidigeWaarde = 1;
-                    }
-                    if (beurs.OudeWaardes == null)
-                        beurs.OudeWaardes = new List<BeursWaardes>();
-                    beurs.OudeWaardes.Add(w);
+                    if (beurs.Waardes == null)
+                        beurs.Waardes = new List<BeursWaardes>();
+                    beurs.Waardes.Add(w);
                 }
                 await db.SaveChangesAsync();
 

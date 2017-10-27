@@ -1,4 +1,4 @@
-﻿@model Beursspel.Models.Beurzen.Beurs
+﻿@model Beursspel.Models.AdminViewModels.AdminBeursModel
 
 @{
     if (Model == null)
@@ -7,7 +7,7 @@
     }
     else
     {
-        ViewBag.Title = "Admin: " + Model.Naam;
+        ViewBag.Title = "Admin: " + Model.Beurs.Naam;
     }
     Layout = "_Layout";
 }
@@ -19,45 +19,45 @@
                 <h3 class="box-title">Bewerken</h3>
             </div>
             <div class="box-body">
-                <form method="post">
+                <form method="post" asp-action="SetBeurs">
                     <div class="form-group">
-                        <label asp-for="BeursId"></label>
-                        <input asp-for="BeursId" class="form-control" readonly="readonly"  />
-                        <span asp-validation-for="BeursId" class="text-danger"></span>
+                        <label asp-for="Beurs.BeursId"></label>
+                        <input asp-for="Beurs.BeursId" class="form-control" readonly="readonly"  />
+                        <span asp-validation-for="Beurs.BeursId" class="text-danger"></span>
                     </div>
                     <div class="form-group">
-                        <label asp-for="Naam"></label>
-                        <input asp-for="Naam" class="form-control"/>
-                        <span asp-validation-for="Naam" class="text-danger"></span>
+                        <label asp-for="Beurs.Naam"></label>
+                        <input asp-for="Beurs.Naam" class="form-control"/>
+                        <span asp-validation-for="Beurs.Naam" class="text-danger"></span>
                     </div>
                     <div class="form-group">
-                        <label asp-for="Omschrijving"></label>
-                        <textarea asp-for="Omschrijving" class="form-control" id="omschrijving"></textarea>
-                        <span asp-validation-for="Omschrijving" class="text-danger"></span>
+                        <label asp-for="Beurs.AantalLeden"></label>
+                        <input asp-for="Beurs.AantalLeden" class="form-control"/>
+                        <span asp-validation-for="Beurs.AantalLeden" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Beurs.Omschrijving"></label>
+                        <textarea asp-for="Beurs.Omschrijving" class="form-control" id="omschrijving"></textarea>
+                        <span asp-validation-for="Beurs.Omschrijving" class="text-danger"></span>
                     </div>
                     <div class="form-group">
                         <label>Voorvertoning</label>
                         <p id="markdown-preview"></p>
                     </div>
                     <div class="form-group">
-                        <label asp-for="HuidigeWaarde"></label>
-                        @{ var value = Settings.StartBeursWaarde; }
-                        @if (Model != null)
-                        {
-                            value = Model.HuidigeWaarde;
-                        }
-                        <input asp-for="HuidigeWaarde" class="form-control" value="@value"/>
-                        <span asp-validation-for="HuidigeWaarde" class="text-danger"></span>
+                        <label asp-for="NieuweWaarde"></label>
+                        <input asp-for="NieuweWaarde" class="form-control"/>
+                        <span asp-validation-for="NieuweWaarde" class="text-danger"></span>
                     </div>
                     <div class="form-group">
-                        <label asp-for="BeschikbareAandelen"></label>
+                        <label asp-for="Beurs.BeschikbareAandelen"></label>
                         @{ var aantal = Settings.StartBeursBeschikbareAandelen; }
                         @if (Model != null)
                         {
-                            aantal = Model.BeschikbareAandelen;
+                            aantal = Model.Beurs.BeschikbareAandelen;
                         }
-                        <input asp-for="BeschikbareAandelen" class="form-control" value="@aantal"/>
-                        <span asp-validation-for="BeschikbareAandelen" class="text-danger"></span>
+                        <input asp-for="Beurs.BeschikbareAandelen" class="form-control" value="@aantal"/>
+                        <span asp-validation-for="Beurs.BeschikbareAandelen" class="text-danger"></span>
                     </div>
                     <div class="form-group">
                         <button type="submit" class="btn btn-success">Opslaan</button>
@@ -74,7 +74,7 @@
         $(function() {
             @if (Model != null)
             {
-                @:$("#markdown-preview").html(markdownify('@Model.Omschrijving'));
+                @:$("#markdown-preview").html(markdownify('@Model.Beurs.Omschrijving'));
             }
         });
 

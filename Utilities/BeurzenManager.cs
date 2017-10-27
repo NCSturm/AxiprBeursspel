@@ -19,7 +19,7 @@ namespace Beursspel.Utilities
         {
             using (var db = new ApplicationDbContext())
             {
-                var beurzen = (await db.Beurzen.Include(x => x.OudeWaardes)
+                var beurzen = (await db.Beurzen.Include(x => x.Waardes)
                     .ToDictionaryAsync(x => x.BeursId, x => x));
                 _cached = new ConcurrentDictionary<int, Beurs>(beurzen);
             }
@@ -27,7 +27,19 @@ namespace Beursspel.Utilities
             {
                 if (_cached.TryGetValue(cachedKey, out var beurs))
                 {
-                    beurs.OudeWaardes.Sort((x, y) => DateTime.Compare(x.Tijd, y.Tijd));
+                    beurs.Waardes.Sort((x, y) => DateTime.Compare(x.Tijd, y.Tijd));
+                }
+            }
+        }
+
+        public static async Task SetCache(IEnumerable<Beurs> beurzen)
+        {
+            _cached = new ConcurrentDictionary<int, Beurs>(beurzen.ToDictionary(x => x.BeursId, x => x));
+            foreach (var cachedKey in _cached.Keys)
+            {
+                if (_cached.TryGetValue(cachedKey, out var beurs))
+                {
+                    beurs.Waardes.Sort((x, y) => DateTime.Compare(x.Tijd, y.Tijd));
                 }
             }
         }

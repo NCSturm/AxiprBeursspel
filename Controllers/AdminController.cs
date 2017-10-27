@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Beursspel.Data;
@@ -182,33 +183,46 @@ namespace Beursspel.Controllers
                 return View(null);
             }
             var beurs = await BeurzenManager.GetBeursAsync(i);
-            return View(beurs);
+            return View(new AdminBeursModel
+            {
+                Beurs = beurs,
+                NieuweWaarde = beurs.HuidigeWaarde
+            });
         }
 
         [HttpPost]
-        public async Task<IActionResult> Beurs(Beurs beurs)
+        public async Task<IActionResult> SetBeurs(AdminBeursModel data)
         {
-            var id = beurs.BeursId;
-            if (beurs.BeursId == 0)
+            var id = data.Beurs.BeursId;
+            if (data.Beurs.BeursId == 0)
             {
-                id = await CreateBeurs(beurs);
+                id = await CreateBeurs(data.Beurs);
             }
             else
             {
-                await ModifyBeurs(beurs);
+                await ModifyBeurs(data);
             }
             return RedirectToAction("Beurs", new {id = id});
         }
 
-        private static async Task ModifyBeurs(Beurs beurs)
+        private static async Task ModifyBeurs(AdminBeursModel model)
         {
+            var beurs = model.Beurs;
             using (var db = new ApplicationDbContext())
             {
-                var vorigeBeurs = await db.Beurzen.Include(x => x.OudeWaardes)
+                var dbBeurs = await db.Beurzen.Include(x => x.Waardes)
                     .FirstOrDefaultAsync(x => x.BeursId == beurs.BeursId);
-                beurs.OudeWaardes = vorigeBeurs.OudeWaardes;
+                var laatste = dbBeurs.Waardes.LastOrDefault();
+                if (laatste != null)
+                {
+                    laatste.Waarde = model.NieuweWaarde;
+                    db.Update(laatste);
+                }
+                dbBeurs.AantalLeden = model.Beurs.AantalLeden;
+                dbBeurs.BeschikbareAandelen = model.Beurs.BeschikbareAandelen;
+                dbBeurs.Naam = model.Beurs.Naam;
+                dbBeurs.Omschrijving = model.Beurs.Omschrijving;
 
-                vorigeBeurs = beurs;
                 await db.SaveChangesAsync();
             }
             await BeurzenManager.ModifyBeurs(beurs);
@@ -216,7 +230,17 @@ namespace Beursspel.Controllers
 
         private static async Task<int> CreateBeurs(Beurs beurs)
         {
-            beurs.OudeWaardes = new List<BeursWaardes>();
+            beurs.Waardes = new List<BeursWaardes>
+            {
+                new BeursWaardes
+                {
+                    Beurs = beurs,
+                    BeursId = beurs.BeursId,
+                    Tijd = DateTime.Now,
+                    Type = BeursWaardes.WaardeType.Onbekend,
+                    Waarde = Settings.StartBeursWaarde
+                }
+            };
             using (var db = new ApplicationDbContext())
             {
                 await db.Beurzen.AddAsync(beurs);
