@@ -59,10 +59,17 @@ namespace Beursspel
                     x.Password.RequireLowercase = false;
                     x.Password.RequireNonAlphanumeric = false;
                     x.Password.RequireUppercase = false;
-
+                    x.Lockout = new LockoutOptions
+                    {
+                        AllowedForNewUsers = true,
+                        DefaultLockoutTimeSpan = TimeSpan.FromMinutes(1),
+                        MaxFailedAccessAttempts = 10
+                    };
                 })
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
+
+
 
             services.Configure<SecurityStampValidatorOptions>(options =>
             {
