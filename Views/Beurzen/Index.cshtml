@@ -1,4 +1,4 @@
-﻿@model List<Beursspel.Models.Beurzen.Beurs>
+﻿@model Beursspel.Models.BeursViewModels.BeursLijstModel
 
 @{
     ViewBag.Title = "Beurzen";
@@ -28,10 +28,12 @@
                     <tr>
                         <th>Beursnaam</th>
                         <th>Waarde</th>
+                        <th>Beschikbare Aandelen</th>
+                        <th>Jouw Aandelen</th>
                     </tr>
                     </thead>
                     <tbody>
-                    @foreach (var beurs in Model)
+                    @foreach (var beurs in Model.Beurzen)
                     {
                         <tr onclick="window.document.location='/Beurzen/Beurs/@beurs.BeursId'" style="cursor: pointer">
                             <td>
@@ -39,6 +41,19 @@
                             </td>
                             <td>
                                 @beurs.HuidigeWaarde
+                            </td>
+                            <td>
+                                @beurs.BeschikbareAandelen
+                            </td>
+                            <td>
+                                @if (Model.AandeelAantallen.ContainsKey(beurs.BeursId))
+                                {
+                                    @Model.AandeelAantallen[beurs.BeursId]
+                                }
+                                else
+                                {
+                                    @:0
+                                }
                             </td>
                         </tr>
                     }

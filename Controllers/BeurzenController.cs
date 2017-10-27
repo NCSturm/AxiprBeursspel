@@ -27,7 +27,19 @@ namespace Beursspel.Controllers
         public async Task<IActionResult> Index()
         {
             var beurzen = await BeurzenManager.GetBeurzenAsync();
-            return View(beurzen);
+            Dictionary<int, int> aantallen;
+            var userId = User.GetUserId();
+            using (var db = new ApplicationDbContext())
+            {
+                aantallen = await db.Aandelen.Where(x => x.ApplicationUserId == userId)
+                    .ToDictionaryAsync(x => x.BeursId, x => x.Aantal);
+            }
+
+            return View(new BeursLijstModel
+            {
+                Beurzen = beurzen,
+                AandeelAantallen = aantallen
+            });
         }
 
         private static async Task<ApplicationUser> GetGebruikerWithAandelen(HttpContext httpContext)
