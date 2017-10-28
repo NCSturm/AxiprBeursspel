@@ -47,6 +47,8 @@ namespace Beursspel.Berekeningen
             }
         }
 
+        private const float InitieleMaatstaaf = 0.3f;
+
         private static async Task BerekenBeurs(Beurs beurs,
             List<TelMomentModel> telMomenten, TelMomentModel telMoment)
         {
@@ -59,14 +61,14 @@ namespace Beursspel.Berekeningen
             {
 
                 //als meer dan 30 procent aanwezig is, laten we de prijs stijgen
-                if (aanwezigheid > 0.3f)
+                if (aanwezigheid > InitieleMaatstaaf)
                 {
                     nieuweWaarde = huidigeWaarde + (huidigeWaarde * aanwezigheid * 0.25d);
                 }
                 //anders laten we hem dalen
                 else
                 {
-                    nieuweWaarde = huidigeWaarde - (huidigeWaarde * (0.3f - aanwezigheid) * 0.25d);
+                    nieuweWaarde = huidigeWaarde - (huidigeWaarde * (InitieleMaatstaaf - aanwezigheid) * 0.25d);
                 }
             }
             else
