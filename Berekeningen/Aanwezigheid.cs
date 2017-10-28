@@ -23,8 +23,23 @@ namespace Beursspel.Berekeningen
                     if (beurs.Waardes.Any(x => x.Type == BeursWaardes.WaardeType.Aanwezigheid &&
                                                x.Tijd == telMoment.Tijd))
                     {
-                        //TODO: bewerk
-                        throw new NotImplementedException();
+                        var telBeurs = telMoment.Beurzen.FirstOrDefault(x => x.BeursId == beurs.BeursId);
+                        if (telBeurs == null)
+                        {
+                            throw new NullReferenceException("Beurs is null.");
+                        }
+                        var telMomenten = await db.TelMomentModel.
+                            Where(x => x.BeursId == beurs.BeursId && x.TelMomentModelId != telBeurs.TelMomentModelId
+                                       && x.Tijd < telMoment.Tijd)
+                            .OrderByDescending(x => x.Tijd)
+                            .Take(3)
+                            .ToListAsync();
+                        Console.WriteLine(telMomenten.Count);
+                        var waarde = await BerekenBeurs(beurs, telMomenten, telBeurs);
+                        beurs.Waardes.Remove(beurs.Waardes
+                            .FirstOrDefault(x => x.Type == BeursWaardes.WaardeType.Aanwezigheid &&
+                                                 x.Tijd == telMoment.Tijd));
+                        beurs.Waardes.Add(waarde);
                     }
                     else
                     {
@@ -38,7 +53,8 @@ namespace Beursspel.Berekeningen
                             .OrderByDescending(x => x.Tijd)
                             .Take(3)
                             .ToListAsync();
-                        await BerekenBeurs(beurs, telMomenten, telBeurs);
+                        var waarde = await BerekenBeurs(beurs, telMomenten, telBeurs);
+                        beurs.Waardes.Add(waarde);
                         db.Update(beurs);
                     }
                 }
@@ -49,17 +65,17 @@ namespace Beursspel.Berekeningen
 
         private const float InitieleMaatstaaf = 0.3f;
 
-        private static async Task BerekenBeurs(Beurs beurs,
+        private static async Task<BeursWaardes> BerekenBeurs(Beurs beurs,
             List<TelMomentModel> telMomenten, TelMomentModel telMoment)
         {
             var aanwezigheid = (float)telMoment.Aantal / beurs.AantalLeden;
-            var huidigeWaarde = beurs.HuidigeWaarde;
+            var huidigeWaarde = beurs.Waardes.Where(x => x.Tijd < telMoment.Tijd).OrderBy(x => x.Tijd).Last()
+                .Waarde;
             double nieuweWaarde;
 
             //als er nog geen telmomenten zijn
             if (!telMomenten.Any())
             {
-
                 //als meer dan 30 procent aanwezig is, laten we de prijs stijgen
                 if (aanwezigheid > InitieleMaatstaaf)
                 {
@@ -93,15 +109,14 @@ namespace Beursspel.Berekeningen
                 }
                 nieuweWaarde = huidigeWaarde + (huidigeWaarde * verschilProportie * 0.2d);
             }
-
-            beurs.Waardes.Add(new BeursWaardes
+            return new BeursWaardes
             {
                 Beurs = beurs,
                 BeursId = beurs.BeursId,
                 Tijd =telMoment.Tijd,
                 Type = BeursWaardes.WaardeType.Aanwezigheid,
                 Waarde = nieuweWaarde
-            });
+            };
         }
     }
 }

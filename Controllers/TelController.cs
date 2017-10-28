@@ -80,6 +80,7 @@ namespace Beursspel.Controllers
                         }
                     }
                     await db.SaveChangesAsync();
+                    await Berekeningen.Aanwezigheid.BerekenBeurzen(dbHouder);
                 }
             }
             return RedirectToAction("Index");
