@@ -16,56 +16,73 @@ namespace Beursspel.Berekeningen
         {
             using (var db = new ApplicationDbContext())
             {
+                //Haal de beurzen uit de database, itereer over hen
                 var beurzen = await db.Beurzen.Include(x => x.Waardes).ToListAsync();
                 foreach (var beurs in beurzen)
                 {
+                    //We moeten zeker zijn dat de waarde geordend zijn op tijd
                     beurs.Waardes = beurs.Waardes.OrderBy(x => x.Tijd).ToList();
+                    //als er al een waarde is die uitgerekend is door aanwezigheid, en dezelfde tijd als deze heeft
+                    //zijn we deze aan het bewerken
                     if (beurs.Waardes.Any(x => x.Type == BeursWaardes.WaardeType.Aanwezigheid &&
                                                x.Tijd == telMoment.Tijd))
                     {
+                        //We pakken de beurs waar het telmoment naar verwijst aan de hand van het beurs id
                         var telBeurs = telMoment.Beurzen.FirstOrDefault(x => x.BeursId == beurs.BeursId);
                         if (telBeurs == null)
                         {
                             throw new NullReferenceException("Beurs is null.");
                         }
+                        //pak de telmomenten voor de huidige beurs die niet het huidige moment zijn, en die
+                        //voor dit telmoment hebben plaatsgevonden. We nemen hier de laatste drie van.
                         var telMomenten = await db.TelMomentModel.
                             Where(x => x.BeursId == beurs.BeursId && x.TelMomentModelId != telBeurs.TelMomentModelId
                                        && x.Tijd < telMoment.Tijd)
                             .OrderByDescending(x => x.Tijd)
                             .Take(3)
                             .ToListAsync();
-                        Console.WriteLine(telMomenten.Count);
-                        var waarde = await BerekenBeurs(beurs, telMomenten, telBeurs);
+                        //bereken de beurswaarde
+                        var waarde = BerekenBeurs(beurs, telMomenten, telBeurs);
+                        //verwijder de oude waarde
                         beurs.Waardes.Remove(beurs.Waardes
                             .FirstOrDefault(x => x.Type == BeursWaardes.WaardeType.Aanwezigheid &&
                                                  x.Tijd == telMoment.Tijd));
+                        //voeg de geupdate waarde toe
                         beurs.Waardes.Add(waarde);
                     }
                     else
                     {
+                        //We pakken de beurs waar het telmoment naar verwijst aan de hand van het beurs id
                         var telBeurs = telMoment.Beurzen.FirstOrDefault(x => x.BeursId == beurs.BeursId);
                         if (telBeurs == null)
                         {
                             throw new NullReferenceException("Beurs is null.");
                         }
+                        //pak de telmomenten voor de huidige beurs die niet het huidige moment zijn,
+                        // We nemen hier de laatste drie van.
                         var telMomenten = await db.TelMomentModel.
                             Where(x => x.BeursId == beurs.BeursId && x.TelMomentModelId != telBeurs.TelMomentModelId)
                             .OrderByDescending(x => x.Tijd)
                             .Take(3)
                             .ToListAsync();
-                        var waarde = await BerekenBeurs(beurs, telMomenten, telBeurs);
+                        //bereken de beurswaarde
+                        var waarde = BerekenBeurs(beurs, telMomenten, telBeurs);
+                        //voeg de geupdate waarde toe
                         beurs.Waardes.Add(waarde);
+                        //update de beurs
                         db.Update(beurs);
                     }
                 }
+                //verwijder de locale cache, en update deze met de nieuwe beruzen
                 await BeurzenManager.SetCache(beurzen);
+                //sla de veranderingen in de database op
                 await db.SaveChangesAsync();
             }
         }
 
         private const float InitieleMaatstaaf = 0.3f;
 
-        private static async Task<BeursWaardes> BerekenBeurs(Beurs beurs,
+        private static BeursWaardes BerekenBeurs(Beurs beurs,
             List<TelMomentModel> telMomenten, TelMomentModel telMoment)
         {
             var aanwezigheid = (float)telMoment.Aantal / beurs.AantalLeden;
