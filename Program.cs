@@ -32,13 +32,15 @@ namespace Beursspel
             commandLineApplication.Execute(args);
         }
 
-        private static void RunApp(string[] args, CommandOption doMigrate, CommandOption verifyMigrate)
-        {
-            var webhost = WebHost.CreateDefaultBuilder(args)
+        public static IWebHost BuildWebHost(string[] args) =>
+            WebHost.CreateDefaultBuilder(args)
                 .UseStartup<Startup>()
                 .UseUrls("http://0.0.0.0:5000")
                 .Build();
 
+        private static void RunApp(string[] args, CommandOption doMigrate, CommandOption verifyMigrate)
+        {
+            var webhost = BuildWebHost(args);
 
             if (verifyMigrate.HasValue() && doMigrate.HasValue())
             {
