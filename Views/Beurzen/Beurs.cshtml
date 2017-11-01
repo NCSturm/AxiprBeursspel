@@ -50,7 +50,7 @@
 
                             <div class="info-box-content">
                                 <span class="info-box-text">Huidige Waarde</span>
-                                <span class="info-box-number">@Model.Beurs.HuidigeWaarde</span>
+                                <span class="info-box-number">€@Model.Beurs.HuidigeWaarde.ToString("F2")</span>
 
                                 <div class="progress">
                                     <div class="progress-bar" style="width: @Math.Abs(diff).ToString("P")"></div>
@@ -95,7 +95,7 @@
 
                     <div class="info-box-content">
                         <span class="info-box-text">Prijs per Aandeel</span>
-                        <span class="info-box-number">@Model.Beurs.AandeelPrijs</span>
+                        <span class="info-box-number">€@Model.Beurs.AandeelPrijs.ToString("F2")</span>
                     </div>
                 </div>
 
@@ -178,7 +178,7 @@
             foreach (var oudeWaarde in Model.Beurs.Waardes)
             {
                 @:chartLabels.push('@oudeWaarde.Tijd.Date.ToString("dd/MM")');
-                @:chartData.push('@oudeWaarde.Waarde');
+                @:chartData.push('@oudeWaarde.Waarde.ToString("F2")');
             }
         }
 
