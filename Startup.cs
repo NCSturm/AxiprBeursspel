@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -36,14 +37,16 @@ namespace Beursspel
             Configuration = configuration;
         }
 
-        public static IConfiguration Configuration { get; private set; }
+        private IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             var connectionString = Configuration["connectionString"] ?? Configuration["prod:connectionString"];
+            Debug.Assert(connectionString != null, "connecting string is null");
             services.AddEntityFrameworkNpgsql()
                 .AddDbContext<ApplicationDbContext>(builder => builder.UseNpgsql(connectionString));
+
 
             services.AddIdentity<ApplicationUser, IdentityRole>(x =>
                 {
@@ -66,8 +69,6 @@ namespace Beursspel
                 })
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
-
-
 
             services.Configure<SecurityStampValidatorOptions>(options =>
             {
@@ -162,6 +163,11 @@ namespace Beursspel
                 Authorization = new []{new HangfireAuthentication()}
             };
             app.UseHangfireDashboard("/hangfire", options);
+
+            using (var context = new ApplicationDbContext())
+            {
+                context.Database.Migrate();
+            }
 
 
         }

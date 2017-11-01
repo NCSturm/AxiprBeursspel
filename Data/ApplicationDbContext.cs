@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using System;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Beursspel.Models;
 using Beursspel.Models.Beurzen;
@@ -12,6 +13,7 @@ namespace Beursspel.Data
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
         :base(options)
         {
+            Console.WriteLine(Environment.StackTrace);
             Options = options;
         }
 
@@ -32,6 +34,7 @@ namespace Beursspel.Data
         public DbSet<BeursWaardes> BeursWaardes { get; set; }
         public DbSet<TelMomentHouder> TelMomenten { get; set; }
         public DbSet<TelMomentModel> TelMomentModel { get; set; }
+        public DbSet<GeplandTelMoment> GeplandeTelMomenten { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

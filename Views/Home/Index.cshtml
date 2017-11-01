@@ -1,8 +1,12 @@
-﻿@model List<TopScoreModel>
+﻿@model HomeModel
 
 @{
     ViewBag.Title = "Home";
     Layout = "_Layout";
+}
+
+@section style{
+  <link rel="stylesheet" href="lib/fullCalendar/fullcalendar.min.css" />
 }
 
 <div class="row">
@@ -40,7 +44,7 @@
             <th>Waarde</th>
           </tr>
           </thead>
-          @foreach (var speler in Model)
+          @foreach (var speler in Model.TopScores)
           {
             <tr>
               <td>@speler.Naam</td>
@@ -54,9 +58,48 @@
     <!-- /.box -->
   </div>
 </div>
+<div class="row">
+  <div class="col-md-6 col-sm-12">
+    <div class="box box-solid">
+      <div class="box-header with-border">
+        <i class="fa fa-calendar"></i>
+
+        <h3 class="box-title">Geplande Tellingen</h3>
+      </div>
+      <!-- /.box-header -->
+      <div class="box-body">
+        <div id="planning"></div>
+
+      </div>
+    </div>
+  </div>
+</div>
 
 @section scripts{
   <script src="lib/jquery-datatables/jquery.dataTables.js"></script>
   <script src="lib/bootstrap-datatables/dataTables.bootstrap.js"></script>
-
+  <script src="lib/moment/moment.min.js"></script>
+  <script src="lib/fullCalendar/fullcalendar.min.js"></script>
+  <script src='lib/fullCalendar/nl.js'></script>
+  <script>
+    $(document).ready(function() {
+      $('#planning').fullCalendar({
+        themeSystem: 'bootstrap3',
+        defaultView: "listMonth",
+        noEventsMessage: "Nog geen telmomenten",
+        validRange: {
+          start: '2017-11-12',
+          end: '2017-12-13'
+        },
+        showNonCurrentDates: false,
+        height: 500,
+        events: [
+          @foreach (var telMoment in Model.TelMomenten)
+          {
+            @:{title: " @telMoment.Reden", start: "@telMoment.Tijd.ToString("o")"},
+          }
+        ]
+      });
+    });
+  </script>
 }

@@ -68,16 +68,6 @@
                                 }
 
 
-                                @if (user.Rollen.Contains("Tapper"))
-                                {
-                                    <button type="button" class="remove_tapper bg-orange btn btn-flat" data-id="@user.UserId">Tapper</button>
-                                }
-                                else
-                                {
-                                    <button type="button" class="grant_tapper btn btn-flat" data-id="@user.UserId">Tapper</button>
-                                }
-
-
                                 @if (user.Rollen.Contains("Admin"))
                                 {
                                     <button type="button" class="remove_admin bg-orange btn btn-flat" data-id="@user.UserId">Admin</button>
