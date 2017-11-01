@@ -36,7 +36,7 @@ namespace Beursspel
             Configuration = configuration;
         }
 
-        private IConfiguration Configuration { get; }
+        public static IConfiguration Configuration { get; private set; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -44,7 +44,6 @@ namespace Beursspel
             var connectionString = Configuration["connectionString"] ?? Configuration["prod:connectionString"];
             services.AddEntityFrameworkNpgsql()
                 .AddDbContext<ApplicationDbContext>(builder => builder.UseNpgsql(connectionString));
-
 
             services.AddIdentity<ApplicationUser, IdentityRole>(x =>
                 {

@@ -31,6 +31,7 @@ namespace Beursspel.Models.Beurzen
             }
         }
 
+        public int VorigeBeschikbareAandelen { get; set; }
         public int BeschikbareAandelen { get; set; } = Settings.StartBeursBeschikbareAandelen;
 
         public double AandeelPrijs => HuidigeWaarde / Settings.StartBeursBeschikbareAandelen;

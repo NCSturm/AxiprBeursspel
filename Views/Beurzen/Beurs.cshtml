@@ -137,7 +137,7 @@
                     <div class="form-group">
                         <input asp-for="BeursId" value="@Model.Beurs.BeursId" readonly="readonly" hidden/>
                         <label asp-for="Aantal"></label>
-                        <input asp-for="Aantal" class="form-control" id="koop-aantal-input"/>
+                        <input asp-for="Aantal" class="form-control" id="koop-aantal-input" min="1"/>
                     </div>
                     <button type="submit" class="btn btn-success">Koop</button>
                 </form>
@@ -150,7 +150,7 @@
                     <div class="form-group">
                         <input asp-for="BeursId" value="@Model.Beurs.BeursId" readonly="readonly" hidden/>
                         <label asp-for="Aantal"></label>
-                        <input asp-for="Aantal" class="form-control"/>
+                        <input asp-for="Aantal" class="form-control" min="1"/>
                     </div>
                     <button type="submit" class="btn btn-danger">Verkoop</button>
                 </form>
@@ -186,7 +186,14 @@
             window.setGebruikerGeld();
             $("#beurs-omschrijving").html(markdownify("@Model.Beurs.Omschrijving"));
             setupbeurschart(chartLabels, chartData);
-            $("#koop-aantal-input").val(Math.floor(@Model.GebruikerGeld / @Model.Beurs.AandeelPrijs));
+            var maxAantal = Math.floor(@Model.GebruikerGeld / @Model.Beurs.AandeelPrijs);
+            if (maxAantal > @Model.Beurs.BeschikbareAandelen) {
+                maxAantal = @Model.Beurs.BeschikbareAandelen;
+            }
+            $("#koop-aantal-input").val(maxAantal);
+            $("#koop-aantal-input").attr({
+                "max" : maxAantal
+            });
         }
 
     </script>
