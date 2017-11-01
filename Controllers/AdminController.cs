@@ -222,6 +222,8 @@ namespace Beursspel.Controllers
                 dbBeurs.BeschikbareAandelen = model.Beurs.BeschikbareAandelen;
                 dbBeurs.Naam = model.Beurs.Naam;
                 dbBeurs.Omschrijving = model.Beurs.Omschrijving;
+                db.Update(dbBeurs);
+                beurs = dbBeurs;
 
                 await db.SaveChangesAsync();
             }
