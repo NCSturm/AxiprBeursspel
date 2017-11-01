@@ -162,12 +162,12 @@
 @section scripts
 {
     <environment include="Development">
-        <script src="/lib/chart.js/chart.js"></script>
-        <script src="/js/beurs-chart.js"></script>
+        <script src="lib/chart.js/chart.js"></script>
+        <script src="js/beurs-chart.js"></script>
     </environment>
     <environment exclude="Development">
-        <script src="/lib/chart.js/chart.min.js"></script>
-        <script src="/js/beurs-chart.min.js"></script>
+        <script src="lib/chart.js/chart.min.js"></script>
+        <script src="js/beurs-chart.min.js"></script>
     </environment>
 
     <script>
@@ -178,12 +178,12 @@
             foreach (var oudeWaarde in Model.Beurs.Waardes)
             {
                 @:chartLabels.push('@oudeWaarde.Tijd.Date.ToString("dd/MM")');
-                            @:chartData.push('@oudeWaarde.Waarde');
+                @:chartData.push('@oudeWaarde.Waarde');
             }
         }
 
         window.onload = function() {
-            setGebruikerGeld();
+            window.setGebruikerGeld();
             $("#beurs-omschrijving").html(markdownify("@Model.Beurs.Omschrijving"));
             setupbeurschart(chartLabels, chartData);
             $("#koop-aantal-input").val(Math.floor(@Model.GebruikerGeld / @Model.Beurs.AandeelPrijs));

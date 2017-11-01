@@ -35,7 +35,7 @@
                     <tbody>
                     @foreach (var beurs in Model.Beurzen)
                     {
-                        <tr onclick="window.document.location='/Beurzen/Beurs/@beurs.BeursId'" style="cursor: pointer">
+                        <tr onclick="window.document.location='@Url.Action("Beurs", new {id = beurs.BeursId})'" style="cursor: pointer">
                             <td>
                                 @beurs.Naam
                             </td>
