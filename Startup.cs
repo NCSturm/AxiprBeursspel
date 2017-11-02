@@ -25,7 +25,7 @@ namespace Beursspel
     public class Startup
     {
         private static readonly string[] ExistingRoles = {
-            "Betaald", "Admin", "Tapper"
+            "Deelnemer", "Admin", "Axipr"
         };
 
         public static bool IsDevelopment;

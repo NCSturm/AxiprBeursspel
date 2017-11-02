@@ -72,7 +72,9 @@
       url: '@Url.Action("GetGebruikerGeld","Account")',
       type: "POST",
       success: function(data) {
-        $('#waarde-houder').text("€" + data);
+        if (data.length < 30) {
+          $('#waarde-houder').text("€" + data);
+        }
       },
       error: function(xhr, status){
       }

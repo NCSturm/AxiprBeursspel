@@ -27,7 +27,7 @@ namespace Beursspel.Middleware
                 var path = httpContext.Request.Path.ToString().ToLower();
                 if (path != "/home/gesloten" && !AllowedPaths.Contains(path))
                 {
-                    if (!httpContext.User.IsInRole("Admin"))
+                    if (!httpContext.User.IsInRole("Admin") && !httpContext.User.IsInRole("Axipr"))
                     {
                         httpContext.Response.Redirect(!Startup.IsDevelopment
                             ? $"https://axiprbeursspel.nl/Home/Gesloten"

@@ -140,34 +140,34 @@ namespace Beursspel.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> GrantTapper(string data)
+        public async Task<IActionResult> GrantAxipr(string data)
         {
             var user = await _userManager.FindByIdAsync(data);
-            await _userManager.AddToRoleAsync(user, "Tapper");
+            await _userManager.AddToRoleAsync(user, "Axipr");
             return Ok();
         }
 
         [HttpPost]
-        public async Task<IActionResult> RemoveTapper(string data)
+        public async Task<IActionResult> RemoveAxipr(string data)
         {
             var user = await _userManager.FindByIdAsync(data);
-            await _userManager.RemoveFromRoleAsync(user, "Tapper");
+            await _userManager.RemoveFromRoleAsync(user, "Axipr");
             return Ok();
         }
 
         [HttpPost]
-        public async Task<IActionResult> GrantBetaald(string data)
+        public async Task<IActionResult> GrantDeelnemer(string data)
         {
             var user = await _userManager.FindByIdAsync(data);
-            await _userManager.AddToRoleAsync(user, "Betaald");
+            await _userManager.AddToRoleAsync(user, "Deelnemer");
             return Ok();
         }
 
         [HttpPost]
-        public async Task<IActionResult> RemoveBetaald(string data)
+        public async Task<IActionResult> RemoveDeelnemer(string data)
         {
             var user = await _userManager.FindByIdAsync(data);
-            await _userManager.RemoveFromRoleAsync(user, "Betaald");
+            await _userManager.RemoveFromRoleAsync(user, "Deelnemer");
             return Ok();
         }
 

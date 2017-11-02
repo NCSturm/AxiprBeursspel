@@ -58,15 +58,23 @@
                                 @user.Rollen.Join()
                             </td>
                             <td>
-                                @if (user.Rollen.Contains("Betaald"))
+                                @if (user.Rollen.Contains("Deelnemer"))
                                 {
-                                    <button type="button" class="remove_betaald bg-green btn btn-flat" data-id="@user.UserId">Betaald</button>
+                                    <button type="button" class="remove_deelnemer bg-green btn btn-flat" data-id="@user.UserId">Deelnemer</button>
                                 }
                                 else
                                 {
-                                    <button type="button" class="grant_betaald btn btn-flat" data-id="@user.UserId">Betaald</button>
+                                    <button type="button" class="grant_deelnemer btn btn-flat" data-id="@user.UserId">Deelnemer</button>
                                 }
 
+                                @if (user.Rollen.Contains("Axipr"))
+                                {
+                                    <button type="button" class="remove_axipr bg-blue btn btn-flat" data-id="@user.UserId">Axipr</button>
+                                }
+                                else
+                                {
+                                    <button type="button" class="grant_axipr btn btn-flat" data-id="@user.UserId">Axipr</button>
+                                }
 
                                 @if (user.Rollen.Contains("Admin"))
                                 {
@@ -118,10 +126,10 @@
                 }
             });
         });
-        $('.grant_tapper').on('click', function (e) {
+        $('.grant_deelnemer').on('click', function (e) {
             e.stopPropagation();
             $.ajax({
-                url: '@Url.Action("GrantTapper", "Admin")',
+                url: '@Url.Action("GrantDeelnemer", "Admin")',
                 type: "POST",
                 data: {
                     data: this.dataset.id
@@ -132,10 +140,10 @@
             });
 
         });
-        $('.remove_tapper').on('click', function (e) {
+        $('.remove_deelnemer').on('click', function (e) {
             e.stopPropagation();
             $.ajax({
-                url: '@Url.Action("RemoveTapper", "Admin")',
+                url: '@Url.Action("RemoveDeelnemer", "Admin")',
                 type: "POST",
                 data: {
                     data: this.dataset.id
@@ -145,10 +153,10 @@
                 }
             });
         });
-        $('.grant_betaald').on('click', function (e) {
+        $('.grant_axipr').on('click', function (e) {
             e.stopPropagation();
             $.ajax({
-                url: '@Url.Action("GrantBetaald", "Admin")',
+                url: '@Url.Action("GrantAxipr", "Admin")',
                 type: "POST",
                 data: {
                     data: this.dataset.id
@@ -159,10 +167,10 @@
             });
 
         });
-        $('.remove_betaald').on('click', function (e) {
+        $('.remove_axipr').on('click', function (e) {
             e.stopPropagation();
             $.ajax({
-                url: '@Url.Action("RemoveBetaald", "Admin")',
+                url: '@Url.Action("RemoveAxipr", "Admin")',
                 type: "POST",
                 data: {
                     data: this.dataset.id
