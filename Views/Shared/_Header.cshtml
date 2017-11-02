@@ -15,6 +15,14 @@
     <div class="navbar-custom-menu">
       <ul class="nav navbar-nav">
         <!-- User Account: style can be found in dropdown.less -->
+        @if (!User.Identity.IsAuthenticated)
+        {
+          <li>
+            <a href="@Url.Action("Register", "Account")">
+              <span class="">Registreren</span>
+            </a>
+          </li>
+        }
         <li class="dropdown user user-menu">
           @if (User.Identity.IsAuthenticated)
           {
@@ -28,7 +36,6 @@
             <a href="@Url.Action("Login", "Account")">
               <span class="">Login</span>
             </a>
-
           }
           <ul class="dropdown-menu">
             <!-- User image -->

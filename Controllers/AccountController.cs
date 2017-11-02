@@ -168,7 +168,7 @@ namespace Beursspel.Controllers
             return RedirectToAction(nameof(HomeController.Index), "Home");
         }
 
-
+/*
         [HttpGet]
         [AllowAnonymous]
         public IActionResult ForgotPassword()
@@ -209,6 +209,7 @@ namespace Beursspel.Controllers
         {
             return View();
         }
+        */
 
         [HttpGet]
         [AllowAnonymous]

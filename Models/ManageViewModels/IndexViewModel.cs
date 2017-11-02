@@ -8,6 +8,7 @@ namespace Beursspel.Models.ManageViewModels
 {
     public class IndexViewModel
     {
+        [Display(Name = "Gebruikersnaam")]
         public string Username { get; set; }
         public string Naam { get; set; }
 
