@@ -8,6 +8,7 @@
         <link rel="stylesheet" href="css/toggle-buttons.css"/>
     </environment>
     <environment exclude="Development">
+        <link rel="stylesheet" href="css/toggle-buttons.min.css"/>
     </environment>
 }
 
@@ -19,8 +20,8 @@
             </div>
             <div class="box-body">
                 <div class="row">
-                    <div class="col-sm-2">
-                        <h5>Beurs Open</h5>
+                    <div class="col-sm-3">
+                        <label>Beurs Open</label>
                     </div>
                     <div class="col-sm-6">
                         @{
@@ -31,14 +32,86 @@
                                 isActive = "active";
                             }
                         }
-                        <button type="button" class="btn btn-lg btn-toggle @isActive"
+                        <button id="openBeurs" type="button" class="btn btn-lg btn-toggle @isActive"
                                 data-toggle="button" aria-pressed="@isOpenPressed" autocomplete="off">
                             <div class="handle"></div>
                         </button>
                     </div>
                 </div>
+                <br /><br />
+                <div class="row">
+                    <div class="col-sm-3">
+                        <label>Reset Beursspel</label>
+                    </div>
+                    <div class="col-sm-6">
+                        <button id="resetBeursspel" class="btn btn-danger">Reset Beursspel</button>
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>
 </div>
 
+<div class="modal modal-danger fade" id="confirmReset">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Bevestig</h4>
+            </div>
+            <div class="modal-body">
+                <p>Weet je zeker dat je het beursspel wilt resetten? Dit verwijdert alle aandelen van iedereen
+                    , reset alle beurzen naar hun startwaardes, en verwijdert hun geschiedenis.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline pull-left" data-dismiss="modal">Annuleer</button>
+                <button type="button" id="bevestig" class="btn btn-outline">Bevestig</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+</div>
+
+
+@section scripts
+{
+    <script>
+        $("#openBeurs").click(function(e) {
+            e.preventDefault();
+            $.ajax({
+                type: "POST",
+                url: "@Url.Action("OpenBeursspel")",
+                data: {
+                    set: $("#openBeurs").attr('aria-pressed')
+                },
+                success: function(result) {
+                },
+                error: function(result) {
+                    console.log(result);
+                }
+            });
+        });
+        $("#resetBeursspel").click(function(e) {
+            e.stopPropagation();
+            $('#confirmReset').modal({
+                })
+                .one('click',
+                    '#bevestig',
+                    function() {
+                        $.ajax({
+                            type: "POST",
+                            url: "@Url.Action("ResetBeursspel")",
+                            success: function(result) {
+                                location.reload();
+                            },
+                            error: function(result) {
+                                console.log(result);
+                            }
+                        });
+                    });
+
+        });
+    </script>
+}

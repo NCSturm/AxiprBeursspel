@@ -31,6 +31,57 @@ namespace Beursspel.Controllers
             return View();
         }
 
+        [HttpPost]
+        public async Task<IActionResult> OpenBeursspel(string set)
+        {
+            if (!bool.TryParse(set, out var b))
+            {
+                return BadRequest();
+            }
+            Settings.IsOpen = !b;
+            return Ok();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ResetBeursspel()
+        {
+            using (var db = new ApplicationDbContext())
+            {
+                foreach (var applicationUser in db.Users)
+                {
+                    applicationUser.Aandelen = new List<AandeelHouder>();
+                    applicationUser.Geld = Settings.StartSpelerGeld;
+                    ApplicationUser.ResetCache();
+                }
+                db.Database.ExecuteSqlCommand("DELETE FROM \"AandeelHouder\"");
+                db.Database.ExecuteSqlCommand("DELETE FROM \"BeursWaardes\"");
+                db.Database.ExecuteSqlCommand("DELETE FROM \"TelMomentModel\"");
+                db.Database.ExecuteSqlCommand("DELETE FROM \"TelMomenten\"");
+                await BeurzenManager.ClearCache();
+
+                foreach (var beurs in db.Beurzen)
+                {
+                    beurs.Waardes = new List<BeursWaardes>
+                    {
+                        new BeursWaardes
+                        {
+                            Beurs = beurs,
+                            BeursId = beurs.BeursId,
+                            Tijd = DateTime.Now,
+                            Type = BeursWaardes.WaardeType.Onbekend,
+                            Waarde = Settings.StartBeursWaarde
+                        }
+                    };
+                    beurs.BeschikbareAandelen = Settings.StartBeursBeschikbareAandelen;
+                }
+
+                await db.SaveChangesAsync();
+            }
+            var berekenSpelerWaardes = new Tasks.BerekenSpelerWaardes();
+            await berekenSpelerWaardes.ExecuteAsync();
+            return Ok();
+        }
+
         public async Task<IActionResult> Gebruikers()
         {
             var model = _userManager.Users.AsEnumerable().Select(x => new UserListModel

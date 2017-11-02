@@ -24,7 +24,7 @@ namespace Beursspel.Models
             get => _geld;
             set
             {
-                SpelersGeld[Id] = value;
+                _spelersGeld[Id] = value;
                 _geld = value;
             }
         }
@@ -37,25 +37,30 @@ namespace Beursspel.Models
         /// <summary>
         /// Cache voor geld, aangezien die waarde overal wordt gebruikt.
         /// </summary>
-        private static readonly ConcurrentDictionary<string, double> SpelersGeld =
+        private static ConcurrentDictionary<string, double> _spelersGeld =
             new ConcurrentDictionary<string, double>();
+
+        public static void ResetCache()
+        {
+            _spelersGeld = new ConcurrentDictionary<string, double>();
+        }
 
         public static async Task<double> GetCachedGeld(ClaimsPrincipal user, UserManager<ApplicationUser> userManager,
             HttpContext httpContext)
         {
             var userId = user.GetUserId();
-            if (SpelersGeld.TryGetValue(userId, out var geld))
+            if (_spelersGeld.TryGetValue(userId, out var geld))
             {
                 return geld;
             }
             geld = (await userManager.GetCurrentUser(httpContext)).Geld;
-            SpelersGeld.TryAdd(userId, geld);
+            _spelersGeld.TryAdd(userId, geld);
             return geld;
         }
 
         public ApplicationUser()
         {
-            SpelersGeld.TryAdd(Id, Geld);
+            _spelersGeld.TryAdd(Id, Geld);
         }
 
 

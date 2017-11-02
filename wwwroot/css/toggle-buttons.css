@@ -169,11 +169,11 @@ body {
     transition: opacity .25s;
 }
 .btn-toggle.btn-lg:before {
-    content: 'Off';
+    content: '';
     left: -5rem;
 }
 .btn-toggle.btn-lg:after {
-    content: 'On';
+    content: '';
     right: -5rem;
     opacity: .5;
 }

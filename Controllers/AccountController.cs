@@ -16,6 +16,7 @@ using Beursspel.Services;
 using Beursspel.Utilities;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
+using PaulMiami.AspNetCore.Mvc.Recaptcha;
 
 namespace Beursspel.Controllers
 {
@@ -111,6 +112,7 @@ namespace Beursspel.Controllers
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
+        [ValidateRecaptcha]
         public async Task<IActionResult> Register(RegisterViewModel model, string returnUrl = null)
         {
             ViewData["ReturnUrl"] = returnUrl;

@@ -32,6 +32,11 @@ namespace Beursspel.Utilities
             }
         }
 
+        public static async Task ClearCache()
+        {
+            _cached = null;
+        }
+
         public static async Task SetCache(IEnumerable<Beurs> beurzen)
         {
             _cached = new ConcurrentDictionary<int, Beurs>(beurzen.ToDictionary(x => x.BeursId, x => x));

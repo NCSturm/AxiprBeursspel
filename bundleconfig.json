@@ -9,6 +9,13 @@
     ]
   },
   {
+    "outputFileName": "wwwroot/css/toggle-buttons.min.css",
+    // An array of relative input file paths. Globbing patterns supported
+    "inputFiles": [
+      "wwwroot/css/toggle-buttons.css"
+    ]
+  },
+  {
     "outputFileName": "wwwroot/js/beurs-chart.min.js",
     // An array of relative input file paths. Globbing patterns supported
     "inputFiles": [

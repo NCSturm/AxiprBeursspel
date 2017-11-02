@@ -19,6 +19,7 @@ using Hangfire;
 using Hangfire.PostgreSql;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using PaulMiami.AspNetCore.Mvc.Recaptcha;
 
 namespace Beursspel
 {
@@ -95,6 +96,11 @@ namespace Beursspel
             });
 
             services.AddMvc();
+            services.AddRecaptcha(new RecaptchaOptions
+            {
+                SiteKey = Configuration["Recaptcha:SiteKey"],
+                SecretKey = Configuration["Recaptcha:SecretKey"]
+            });
 
         }
 
