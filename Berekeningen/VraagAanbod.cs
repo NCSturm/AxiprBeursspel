@@ -22,8 +22,12 @@ namespace Beursspel.Berekeningen
                     var verschil = huidigeAandelen - vorigeAandelen;
 
                     var huidigeWaarde = beurs.HuidigeWaarde;
-                    var verschilProportie = verschil / Settings.StartBeursBeschikbareAandelen;
-                    var nieuweWaarde = huidigeWaarde - (huidigeWaarde * 0.1f * verschilProportie);
+                    var verschilProportie = (float)verschil / Settings.StartBeursBeschikbareAandelen;
+                    var nieuweWaarde = huidigeWaarde - (huidigeWaarde * 0.05f * verschilProportie);
+                    if (nieuweWaarde < 1)
+                    {
+                        nieuweWaarde = 1;
+                    }
                     beurs.Waardes.Add(new BeursWaardes
                     {
                         Beurs = beurs,
@@ -32,6 +36,7 @@ namespace Beursspel.Berekeningen
                         Type = BeursWaardes.WaardeType.VraagAanbod,
                         Waarde = nieuweWaarde
                     });
+                    beurs.VorigeBeschikbareAandelen = huidigeAandelen;
                     db.Update(beurs);
                 }
                 await BeurzenManager.SetCache(beurzen);
