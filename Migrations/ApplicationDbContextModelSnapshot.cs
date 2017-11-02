@@ -144,7 +144,8 @@ namespace Beursspel.Migrations
                     b.Property<int>("GeplandTelMomentId")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<string>("Reden");
+                    b.Property<string>("Reden")
+                        .IsRequired();
 
                     b.Property<DateTime>("Tijd");
 
@@ -191,6 +192,24 @@ namespace Beursspel.Migrations
                     b.HasIndex("TelMomentHouderId");
 
                     b.ToTable("TelMomentModel");
+                });
+
+            modelBuilder.Entity("Beursspel.Settings+SettingsHolder", b =>
+                {
+                    b.Property<int>("SettingsHolderId")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<bool>("IsOpen");
+
+                    b.Property<int>("StartBeursBeschikbareAandelen");
+
+                    b.Property<double>("StartBeursWaarde");
+
+                    b.Property<double>("StartSpelerGeld");
+
+                    b.HasKey("SettingsHolderId");
+
+                    b.ToTable("Settings");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>

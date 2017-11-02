@@ -28,6 +28,15 @@
     <link rel="stylesheet" href="css/site.min.css" asp-append-version="true"/>
   </environment>
   @RenderSection("style", required: false)
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-109159115-1"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+
+    function gtag() { dataLayer.push(arguments); }
+
+    gtag('js', new Date());
+    gtag('config', 'UA-109159115-1');
+  </script>
 </head>
 
 <body class="hold-transition skin-blue sidebar-mini">
@@ -67,22 +76,22 @@
   <script src="js/site.min.js"></script>
 </environment>
 <script>
-  function setGebruikerGeld() {
-    $.ajax({
-      url: '@Url.Action("GetGebruikerGeld","Account")',
-      type: "POST",
-      success: function(data) {
-        if (data.length < 30) {
-          $('#waarde-houder').text("€" + data);
-        }
-      },
-      error: function(xhr, status){
-      }
-    });
-  }
-  window.onload = function(){
-    setGebruikerGeld();
-  };
+    function setGebruikerGeld() {
+        $.ajax({
+            url: '@Url.Action("GetGebruikerGeld","Account")',
+            type: "POST",
+            success: function(data) {
+                if (data.length < 30) {
+                    $('#waarde-houder').text("€" + data);
+                }
+            },
+            error: function(xhr, status){
+            }
+        });
+    }
+    window.onload = function(){
+        setGebruikerGeld();
+    };
 </script>
 
 

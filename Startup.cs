@@ -15,6 +15,7 @@ using Beursspel.Models;
 using Beursspel.Models.AccountViewModels;
 using Beursspel.Services;
 using Beursspel.Tasks;
+using Beursspel.Utilities;
 using Hangfire;
 using Hangfire.PostgreSql;
 using Microsoft.AspNetCore.Http;
@@ -99,7 +100,9 @@ namespace Beursspel
             services.AddRecaptcha(new RecaptchaOptions
             {
                 SiteKey = Configuration["Recaptcha:SiteKey"],
-                SecretKey = Configuration["Recaptcha:SecretKey"]
+                SecretKey = Configuration["Recaptcha:SecretKey"],
+                ValidationMessage = "Verifieer dat je geen robot bent",
+                LanguageCode = "nl"
             });
 
         }
@@ -180,6 +183,10 @@ namespace Beursspel
                 context.Database.Migrate();
             }
 
+            var t1 = GeplandeTelMomentenManager.CheckMarktSluiting();
+            t1.Wait();
+            var t2 = GeplandeTelMomentenManager.CheckMarktOpening();
+            t2.Wait();
         }
     }
 }

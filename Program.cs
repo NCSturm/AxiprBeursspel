@@ -82,8 +82,12 @@ namespace Beursspel
                 }
             }
 
+            var createSettings = Settings.LoadSettings();
+            createSettings.Wait();
 
             webhost.Run();
+
+
         }
     }
 }

@@ -28,7 +28,21 @@ namespace Beursspel.Controllers
 
         public async Task<IActionResult> Index()
         {
-            return View();
+            return View(new DashboardModel
+            {
+                StartBeursBeschikbareAandelen = Settings.StartBeursBeschikbareAandelen,
+                StartBeursWaarde = Settings.StartBeursWaarde,
+                StartSpelerGeld = Settings.StartSpelerGeld
+            });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SaveSettings(DashboardModel model)
+        {
+            Settings.StartBeursBeschikbareAandelen = model.StartBeursBeschikbareAandelen;
+            Settings.StartBeursWaarde = model.StartBeursWaarde;
+            Settings.StartSpelerGeld = model.StartSpelerGeld;
+            return Ok();
         }
 
         [HttpPost]

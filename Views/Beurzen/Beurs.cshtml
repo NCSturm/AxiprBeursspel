@@ -1,4 +1,5 @@
-﻿@model Beursspel.Models.BeursViewModels.BeursModel
+﻿@using Beursspel.Utilities
+@model Beursspel.Models.BeursViewModels.BeursModel
 
 @{
     ViewBag.Title = Model.Beurs.Naam;
@@ -128,32 +129,40 @@
                 <h3 class="box-title">Handel</h3>
             </div>
             <div class="box-body">
-                <form asp-action="KoopAandelen" class="form-inline">
-                    <h4>Koop aandelen.</h4>
-                    @if (ViewData.ModelState.Keys.Any(x => x == "Koopfout"))
-                    {
-                        @Html.ValidationSummary(false, "Koopfout", new { @class = "text-danger" })
-                    }
-                    <div class="form-group">
-                        <input asp-for="BeursId" value="@Model.Beurs.BeursId" readonly="readonly" hidden/>
-                        <label asp-for="Aantal"></label>
-                        <input asp-for="Aantal" class="form-control" id="koop-aantal-input" min="1"/>
-                    </div>
-                    <button type="submit" class="btn btn-success">Koop</button>
-                </form>
-                <form asp-action="VerkoopAandelen" class="form-inline">
-                    <h4>Verkoop aandelen.</h4>
-                    @if (ViewData.ModelState.Keys.Any(x => x == "Verkoopfout"))
-                    {
-                        @Html.ValidationSummary(false, "Verkoopfout", new { @class = "text-danger" })
-                    }
-                    <div class="form-group">
-                        <input asp-for="BeursId" value="@Model.Beurs.BeursId" readonly="readonly" hidden/>
-                        <label asp-for="Aantal"></label>
-                        <input asp-for="Aantal" class="form-control" min="1"/>
-                    </div>
-                    <button type="submit" class="btn btn-danger">Verkoop</button>
-                </form>
+                @if (!GeplandeTelMomentenManager.IsMarktDicht)
+                {
+                    <form asp-action="KoopAandelen" class="form-inline">
+                        <h4>Koop aandelen.</h4>
+                        @if (ViewData.ModelState.Keys.Any(x => x == "Koopfout"))
+                        {
+                            @Html.ValidationSummary(false, "Koopfout", new {@class = "text-danger"})
+                        }
+                        <div class="form-group">
+                            <input asp-for="BeursId" value="@Model.Beurs.BeursId" readonly="readonly" hidden/>
+                            <label asp-for="Aantal"></label>
+                            <input asp-for="Aantal" class="form-control" id="koop-aantal-input" min="1"/>
+                        </div>
+                        <button type="submit" class="btn btn-success">Koop</button>
+                    </form>
+                    <form asp-action="VerkoopAandelen" class="form-inline">
+                        <h4>Verkoop aandelen.</h4>
+                        @if (ViewData.ModelState.Keys.Any(x => x == "Verkoopfout"))
+                        {
+                            @Html.ValidationSummary(false, "Verkoopfout", new {@class = "text-danger"})
+                        }
+                        <div class="form-group">
+                            <input asp-for="BeursId" value="@Model.Beurs.BeursId" readonly="readonly" hidden/>
+                            <label asp-for="Aantal"></label>
+                            <input asp-for="Aantal" class="form-control" min="1"/>
+                        </div>
+                        <button type="submit" class="btn btn-danger">Verkoop</button>
+                    </form>
+                }
+                else
+                {
+                    <h5>Omdat er vandaag een telmoment is is de markt momenteel gesloten.</h5>
+                    <h5>Vanaf morgen gaat de markt weer open!</h5>
+                }
             </div>
         </div>
     </div>

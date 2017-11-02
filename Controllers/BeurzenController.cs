@@ -103,6 +103,10 @@ namespace Beursspel.Controllers
         [HttpPost]
         public async Task<IActionResult> KoopAandelen(BeursModel model)
         {
+            if (GeplandeTelMomentenManager.IsMarktDicht)
+            {
+                return RedirectToAction("Beurs", new {id = model.Beurs.BeursId});
+            }
             var gebruiker = await _userManager.GetCurrentUser(HttpContext);
             if (gebruiker == null)
             {
@@ -137,6 +141,11 @@ namespace Beursspel.Controllers
         [HttpPost]
         public async Task<IActionResult> VerkoopAandelen(BeursModel model)
         {
+            if (GeplandeTelMomentenManager.IsMarktDicht)
+            {
+                return RedirectToAction("Beurs", new {id = model.Beurs.BeursId});
+            }
+
             var gebruiker = await GetGebruikerWithAandelen(HttpContext);
             if (gebruiker == null)
             {

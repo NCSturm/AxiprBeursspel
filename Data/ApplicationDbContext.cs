@@ -34,6 +34,7 @@ namespace Beursspel.Data
         public DbSet<TelMomentHouder> TelMomenten { get; set; }
         public DbSet<TelMomentModel> TelMomentModel { get; set; }
         public DbSet<GeplandTelMoment> GeplandeTelMomenten { get; set; }
+        public DbSet<Settings.SettingsHolder> Settings { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
