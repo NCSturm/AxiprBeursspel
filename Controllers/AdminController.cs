@@ -26,6 +26,11 @@ namespace Beursspel.Controllers
             _userRoles = userRoles;
         }
 
+        public async Task<IActionResult> Index()
+        {
+            return View();
+        }
+
         public async Task<IActionResult> Gebruikers()
         {
             var model = _userManager.Users.AsEnumerable().Select(x => new UserListModel

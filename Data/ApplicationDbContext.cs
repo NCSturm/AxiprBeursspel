@@ -13,7 +13,6 @@ namespace Beursspel.Data
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
         :base(options)
         {
-            Console.WriteLine(Environment.StackTrace);
             Options = options;
         }
 

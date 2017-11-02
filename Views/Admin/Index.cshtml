@@ -1,0 +1,44 @@
+﻿@{
+    ViewBag.Title = "Admin Dashboard";
+    Layout = "_Layout";
+}
+
+@section style{
+    <environment include="Development">
+        <link rel="stylesheet" href="css/toggle-buttons.css"/>
+    </environment>
+    <environment exclude="Development">
+    </environment>
+}
+
+<div class="row">
+    <div class="col-sm-6 col-xs-12">
+        <div class="box">
+            <div class="box-header">
+                <h3 class="box-title">Dashboard</h3>
+            </div>
+            <div class="box-body">
+                <div class="row">
+                    <div class="col-sm-2">
+                        <h5>Beurs Open</h5>
+                    </div>
+                    <div class="col-sm-6">
+                        @{
+                            var isActive = "";
+                            var isOpenPressed = Settings.IsOpen.ToString().ToLower();
+                            if (Settings.IsOpen)
+                            {
+                                isActive = "active";
+                            }
+                        }
+                        <button type="button" class="btn btn-lg btn-toggle @isActive"
+                                data-toggle="button" aria-pressed="@isOpenPressed" autocomplete="off">
+                            <div class="handle"></div>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

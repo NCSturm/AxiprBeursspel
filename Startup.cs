@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Beursspel.Data;
+using Beursspel.Middleware;
 using Beursspel.Models;
 using Beursspel.Models.AccountViewModels;
 using Beursspel.Services;
@@ -26,6 +27,8 @@ namespace Beursspel
         private static readonly string[] ExistingRoles = {
             "Betaald", "Admin", "Tapper"
         };
+
+        public static bool IsDevelopment;
 
         public Startup(IConfiguration configuration)
         {
@@ -116,7 +119,8 @@ namespace Beursspel
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, IServiceProvider serviceProvider)
         {
-            app.UsePathBase("/beursspel");
+            IsDevelopment = env.IsDevelopment();
+            //app.UsePathBase("/beursspel");
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -148,6 +152,7 @@ namespace Beursspel
                     RecurringJob.AddOrUpdate(() => o.ExecuteAsync(), o.Cron);
             }
 
+            app.UseMiddleware<CheckIfOpenMiddleware>();
 
             app.UseMvc(routes =>
             {
@@ -168,7 +173,6 @@ namespace Beursspel
             {
                 context.Database.Migrate();
             }
-
 
         }
     }

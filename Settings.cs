@@ -16,5 +16,7 @@
         /// Het aantal aandelen dat een beurs beschikbaar heeft bij aanvang van het spel
         /// </summary>
         public const int StartBeursBeschikbareAandelen = 200;
+
+        public static bool IsOpen { get; set; }
     }
 }

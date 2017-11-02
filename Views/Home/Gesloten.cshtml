@@ -1,0 +1,38 @@
+﻿@{
+  ViewBag.Title = "Axipr Beursspel";
+  Layout = "";
+}
+<!DOCTYPE html>
+<html>
+<head>
+  <environment include="Development">
+    <base href="http://localhost:5000/"/>
+  </environment>
+  <environment exclude="Development">
+    <base href="https://axiprbeursspel.nl/"/>
+  </environment>
+
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>@ViewBag.Title</title>
+  <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+  <link rel="stylesheet" href="lib/bootstrap/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="lib/font-awesome/font-awesome.min.css">
+  <link rel="stylesheet" href="lib/bootstrap/dist/css/bootstrap-theme.min.css">
+  <link rel="stylesheet" href="lib/admin-lte/css/AdminLTE.min.css">
+
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
+</head>
+<body class="hold-transition lockscreen">
+<div class="lockscreen-wrapper">
+  <div class="lockscreen-logo">
+    <a href="http://axipr.nl"><b>Axipr</b> Beursspel</a>
+  </div>
+  <div class="lockscreen-name">Het Axipr Beursspel is nog niet geopend</div>
+  <div class="lockscreen-name">We hopen je te zien op 13 November!</div>
+</div>
+
+<script src="lib/jquery/jquery.min.js"></script>
+<script src="lib/bootstrap/dist/js/bootstrap.min.js"></script>
+</body>
+</html>
