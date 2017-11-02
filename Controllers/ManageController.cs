@@ -57,6 +57,7 @@ namespace Beursspel.Controllers
             var model = new IndexViewModel
             {
                 Username = user.UserName,
+                Naam = user.Naam,
                 StatusMessage = StatusMessage
             };
 
