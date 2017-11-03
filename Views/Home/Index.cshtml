@@ -11,23 +11,58 @@
 
 <div class="row">
   <div class="col-md-6">
-    <div class="box box-solid">
-      <div class="box-header with-border">
-        <i class="fa fa-thumbs-up"></i>
+    <div class="row">
+      <div class="col-sm-12">
+        <div class="box box-solid">
+          <div class="box-header with-border">
+            <i class="fa fa-thumbs-up"></i>
 
-        <h3 class="box-title">Welkom!</h3>
+            <h3 class="box-title">Welkom!</h3>
+          </div>
+          <!-- /.box-header -->
+          <div class="box-body">
+            <p>
+              Welkom bij het grote Axipr Beursspel! Wie wordt dit jaar de beste belegger van Demos?
+              Wie zal het beste speculeren over wie er aan de bar zit? Zal Boy weer dingen slopen? We gaan het allemaal zien!
+              <br/><br/>
+              Via het menu aan je linkerhand (linksbovenin voor mobiele gebruikers) heb je toegang tot een lijst van beurzen.
+              Je kan van deze beurzen aandelen kopen, en deze zullen over de komende twee maanden van prijs gaan veranderen.
+              <br/><br/>
+              De prijsveranderingen gebeurt door twee verschillende dingen. Ten eerste zullen er periodiek telmomenten plaatsvinden.
+              Een overzicht van wanneer er geteld zal worden vind je hieronder. Daarnaast zullen de prijzen ook dagelijks veranderen
+              door de vraag en aanbod naar een beurs. Is een beurs erg gewild, zullen de prijzen stijgen. Wilt iedereen er van af, zullen
+              de prijzen dalen.
+              <br/><br/>
+              We wensen iedereen veel succes, en moge de beste winnen!
+              <br/><br/>
+              Met blauwe groet,<br/>
+              Hét Dispuut Axipr
+            </p>
+          </div>
+          <!-- /.box-body -->
+        </div>
+        <!-- /.box -->
       </div>
-      <!-- /.box-header -->
-      <div class="box-body">
-        <p>
-          Hier komt dus echt een moeilijk gaaf stukje over wat het precies is en hoe het werkt. <br/>
-          Ben daar nu alleen te lui voor.
-        </p>
-      </div>
-      <!-- /.box-body -->
     </div>
-    <!-- /.box -->
+    <div class="row">
+      <div class="col-sm-12">
+        <div class="box box-solid">
+          <div class="box-header with-border">
+            <i class="fa fa-calendar"></i>
+
+            <h3 class="box-title">Geplande Tellingen</h3>
+          </div>
+          <!-- /.box-header -->
+          <div class="box-body">
+            <div id="planning"></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
   </div>
+
+
   <div class="col-md-6">
     <div class="box box-solid">
       <div class="box-header with-border">
@@ -59,20 +94,6 @@
   </div>
 </div>
 <div class="row">
-  <div class="col-md-6 col-sm-12">
-    <div class="box box-solid">
-      <div class="box-header with-border">
-        <i class="fa fa-calendar"></i>
-
-        <h3 class="box-title">Geplande Tellingen</h3>
-      </div>
-      <!-- /.box-header -->
-      <div class="box-body">
-        <div id="planning"></div>
-
-      </div>
-    </div>
-  </div>
 </div>
 
 @section scripts{
@@ -92,7 +113,7 @@
           end: '2017-12-13'
         },
         showNonCurrentDates: false,
-        height: 500,
+        height: 350,
         events: [
           @foreach (var telMoment in Model.TelMomenten)
           {

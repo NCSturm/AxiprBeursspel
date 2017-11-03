@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Beursspel.Extensions;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -129,8 +130,8 @@ namespace Beursspel.Controllers
             {
                 var user = new ApplicationUser
                 {
-                    UserName = model.Username,
-                    Naam = model.Naam,
+                    UserName = model.Username.ClearHtml(),
+                    Naam = model.Naam.ClearHtml(),
                     Geld = Settings.StartSpelerGeld
                 };
                 IdentityResult result;

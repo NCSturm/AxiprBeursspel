@@ -141,6 +141,8 @@ namespace Beursspel
             }
 
 
+
+
             app.UseSession();
             app.UseHangfireServer();
 

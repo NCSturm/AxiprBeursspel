@@ -84,6 +84,12 @@
                                 {
                                     <button type="button" class="grant_admin btn btn-flat" data-id="@user.UserId">Admin</button>
                                 }
+
+                            </td>
+                            <td>
+                                <button type="button" class="remove_user btn btn-flat btn-danger" data-id="@user.UserId">
+                                    <i class="fa fa-trash"></i>
+                                </button>
                             </td>
                         </tr>
                     }
@@ -180,6 +186,20 @@
                 }
             });
         });
+        $('.remove_user').on('click', function (e) {
+            e.stopPropagation();
+            $.ajax({
+                url: '@Url.Action("VerwijderGebruiker", "Admin")',
+                type: "POST",
+                data: {
+                    data: this.dataset.id
+                },
+                success: function () {
+                    location.reload();
+                }
+            });
+        });
+
         $(function() {
             $('#users').DataTable({
                 'paging': true,

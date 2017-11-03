@@ -109,11 +109,32 @@ namespace Beursspel.Controllers
             return View(model);
         }
 
+        [HttpPost]
+        public async Task<IActionResult> VerwijderGebruiker(string data)
+        {
+            using (var db = new ApplicationDbContext())
+            {
+                var user = await db.Users.Include(x => x.Aandelen).SingleAsync(x => x.Id == data);
+                if (user.Aandelen != null)
+                {
+                    foreach (var aandeelHouder in user.Aandelen)
+                    {
+                        var beurs = await db.Beurzen.FindAsync(aandeelHouder.BeursId);
+                        beurs.BeschikbareAandelen += aandeelHouder.Aantal;
+                    }
+                    user.Aandelen = new List<AandeelHouder>();
+                }
+                db.Users.Remove(user);
+                await db.SaveChangesAsync();
+            }
+            return Ok();
+        }
+
         public async Task<IActionResult> Gebruiker(string id)
         {
             using (var db = new ApplicationDbContext())
             {
-                var user = await db.Users.Include(x => x.Aandelen).SingleOrDefaultAsync(x => x.Id == id);
+                var user = await db.Users.Include(x => x.Aandelen).SingleAsync(x => x.Id == id);
                 if (user == null)
                     return RedirectToAction("Gebruikers");
                 var userBeursIds = user.Aandelen.Select(x => x.BeursId);
