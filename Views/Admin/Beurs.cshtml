@@ -19,7 +19,7 @@
                 <h3 class="box-title">Bewerken</h3>
             </div>
             <div class="box-body">
-                <form method="post" asp-action="SetBeurs">
+                <form method="post" asp-action="SetBeurs" enctype="multipart/form-data">
                     <div class="form-group">
                         <label asp-for="Beurs.BeursId"></label>
                         <input asp-for="Beurs.BeursId" class="form-control" readonly="readonly"  />
@@ -34,6 +34,15 @@
                         <label asp-for="Beurs.AantalLeden"></label>
                         <input asp-for="Beurs.AantalLeden" class="form-control"/>
                         <span asp-validation-for="Beurs.AantalLeden" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label>Logo</label><br />
+                        <span>Zorg er voor dat het logo even breed is als hoog, dus vierkant</span><br />
+                        @if (Model != null)
+                        {
+                            <img src="uploads/@Model.Beurs.BeursId/128.png" alt="Nog geen logo"/><br />
+                        }
+                        <input class="form-control" type="file" name="pic" accept="image/*"/>
                     </div>
                     <div class="form-group">
                         <label asp-for="Beurs.Omschrijving"></label>
@@ -72,7 +81,7 @@
 {
     <script>
         $(function() {
-            @if (Model != null)
+            @if (Model?.Beurs?.Omschrijving != null)
             {
                 @:$("#markdown-preview").html(markdownify('@Model.Beurs.Omschrijving'));
             }

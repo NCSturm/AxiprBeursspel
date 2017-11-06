@@ -17,7 +17,11 @@ namespace Beursspel.Middleware
         private readonly string[] AllowedPaths = new[]
         {
             "/account/login",
+            "/account/login/",
             "/account/register",
+            "/account/register/",
+            "/account/logout",
+            "/account/logout/",
         };
 
         public async Task Invoke(HttpContext httpContext)

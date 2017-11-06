@@ -9,7 +9,8 @@ namespace Beursspel.Tasks
 {
     public class BerekenBeursWaarde : IRecurringTask
     {
-        public string Cron => "*/5 * * * *";
+        //Elke dag om 5 uur 's nachts
+        public string Cron => "0 5 * * *";
         public bool Enabled => true;
         public async Task ExecuteAsync()
         {

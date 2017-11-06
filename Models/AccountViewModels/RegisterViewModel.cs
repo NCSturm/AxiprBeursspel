@@ -9,7 +9,7 @@ namespace Beursspel.Models.AccountViewModels
     public class RegisterViewModel
     {
         [Required]
-        [StringLength(30, ErrorMessage = "Je gebruikersnaam moet tenminste {2}, en maXImaal {1} letters hebben", MinimumLength = 6)]
+        [StringLength(30, ErrorMessage = "Je gebruikersnaam moet tenminste {2}, en maXImaal {1} letters hebben", MinimumLength = 4)]
         [Display(Name = "Gebruikersnaam")]
         public string Username { get; set; }
 
@@ -18,7 +18,7 @@ namespace Beursspel.Models.AccountViewModels
         public string Naam { get; set; }
 
         [Required]
-        [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 10)]
+        [StringLength(100, ErrorMessage = "Je wachtwoord moet tenminste {2}, en maXImaal {1} letters hebben.", MinimumLength = 8)]
         [DataType(DataType.Password)]
         [Display(Name = "Wachtwoord")]
         public string Password { get; set; }

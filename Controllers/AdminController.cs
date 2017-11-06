@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices.ComTypes;
 using System.Threading.Tasks;
 using Beursspel.Data;
 using Beursspel.Models;
@@ -11,6 +13,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using SixLabors.ImageSharp;
 
 namespace Beursspel.Controllers
 {
@@ -87,6 +90,7 @@ namespace Beursspel.Controllers
                         }
                     };
                     beurs.BeschikbareAandelen = Settings.StartBeursBeschikbareAandelen;
+                    beurs.VorigeBeschikbareAandelen = Settings.StartBeursBeschikbareAandelen;
                 }
 
                 await db.SaveChangesAsync();
@@ -293,6 +297,51 @@ namespace Beursspel.Controllers
             {
                 await ModifyBeurs(data);
             }
+
+            var files = HttpContext.Request.Form.Files;
+            var logo = files.FirstOrDefault();
+            if (!string.IsNullOrWhiteSpace(logo?.FileName))
+            {
+
+                var dir = Directory.CreateDirectory($"wwwroot/uploads/{data.Beurs.BeursId}");
+                using (var inputStream = logo.OpenReadStream())
+                {
+                    using (var image = Image.Load(inputStream))
+                    {
+                        if (image.Width != image.Height)
+                        {
+                            return RedirectToAction("Beurs", new {id = id});
+                        }
+                        using (var outputStream = new FileStream(Path.Combine(dir.FullName, "512.png"), FileMode.Create))
+                        {
+                            image.Mutate(img =>
+                            {
+                                img.Resize(512, 512);
+                            });
+                            image.SaveAsPng(outputStream);
+                        }
+                        using (var outputStream = new FileStream(Path.Combine(dir.FullName, "128.png"), FileMode.Create))
+                        {
+                            image.Mutate(img =>
+                            {
+                                img.Resize(128, 128);
+                            });
+                            image.SaveAsPng(outputStream);
+                        }
+                        using (var outputStream = new FileStream(Path.Combine(dir.FullName, "32.png"), FileMode.Create))
+                        {
+                            image.Mutate(img =>
+                            {
+                                img.Resize(32, 32);
+                            });
+                            image.SaveAsPng(outputStream);
+                        }
+
+                    }
+                }
+
+            }
+
             return RedirectToAction("Beurs", new {id = id});
         }
 
@@ -311,6 +360,7 @@ namespace Beursspel.Controllers
                 }
                 dbBeurs.AantalLeden = model.Beurs.AantalLeden;
                 dbBeurs.BeschikbareAandelen = model.Beurs.BeschikbareAandelen;
+                dbBeurs.VorigeBeschikbareAandelen = model.Beurs.BeschikbareAandelen;
                 dbBeurs.Naam = model.Beurs.Naam;
                 dbBeurs.Omschrijving = model.Beurs.Omschrijving;
                 db.Update(dbBeurs);
@@ -334,6 +384,7 @@ namespace Beursspel.Controllers
                     Waarde = Settings.StartBeursWaarde
                 }
             };
+            beurs.VorigeBeschikbareAandelen = beurs.BeschikbareAandelen;
             using (var db = new ApplicationDbContext())
             {
                 await db.Beurzen.AddAsync(beurs);

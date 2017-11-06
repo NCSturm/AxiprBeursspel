@@ -15,22 +15,37 @@ namespace Beursspel.Controllers
     public class HomeController : Controller
     {
         private static string _adminRoleId;
+        public static List<TopScoreModel> TopScoreCache;
+
         public async Task<IActionResult> Index()
         {
-            List<TopScoreModel> users;
             var telMomenten = await GeplandeTelMomentenManager.GetGeplandeMomenten();
+            if (TopScoreCache == null)
+            {
+                await CreateTopScoreCache();
+            }
+            var topscores = TopScoreCache.Take(10).ToList();
+            return View(new HomeModel{TopScores = topscores, TelMomenten = telMomenten});
+        }
+
+        private async Task CreateTopScoreCache()
+        {
             using (var db = new ApplicationDbContext())
             {
                 if (_adminRoleId == null)
                     _adminRoleId = (await db.Roles.SingleOrDefaultAsync(x => x.NormalizedName == "ADMIN")).Id;
-                users = await db.Users.Where(x => !db.UserRoles.Any(y => y.UserId == x.Id && y.RoleId != _adminRoleId))
-                .OrderByDescending(x => x.Waarde).Take(10).Select(x => new TopScoreModel
-                {
-                    Naam = x.Naam,
-                    Waarde = x.Waarde
-                }).ToListAsync();
+                TopScoreCache = await db.Users
+                    .Where(x =>
+                        db.UserRoles.Where(y => y.UserId == x.Id).All(y => y.RoleId != _adminRoleId)
+                    )
+                    .OrderByDescending(x => x.Waarde)
+                    .Select(x => new TopScoreModel
+                    {
+                        Naam = x.Naam,
+                        Waarde = x.Waarde
+                    })
+                    .ToListAsync();
             }
-            return View(new HomeModel{TopScores = users, TelMomenten = telMomenten});
         }
 
 
@@ -42,6 +57,15 @@ namespace Beursspel.Controllers
         public IActionResult Gesloten()
         {
             return View();
+        }
+
+        public async Task<IActionResult> Scores()
+        {
+            if (TopScoreCache == null)
+            {
+                await CreateTopScoreCache();
+            }
+            return View(TopScoreCache);
         }
     }
 }

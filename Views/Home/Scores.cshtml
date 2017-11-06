@@ -1,7 +1,7 @@
-﻿@model Beursspel.Models.BeursViewModels.BeursLijstModel
+﻿@model List<TopScoreModel>
 
 @{
-    ViewBag.Title = "Beurzen";
+    ViewBag.Title = "Top Scores";
     Layout = "_Layout";
 }
 
@@ -17,51 +17,29 @@
 }
 
 <div class="row">
-    <div class="col-xs-12">
+    <div class="col-sm-6 col-xs-12">
         <div class="box">
             <div class="box-header">
-                <h3 class="box-title">Beurzen</h3>
+                <h3 class="box-title">Gebruikers</h3>
             </div>
             <div class="box-body table-responsive">
-                <table id="beurzen" class="table table-bordered table-hover">
+                <table id="users" class="table table-bordered table-hover ">
                     <thead>
                     <tr>
-                        <td></td>
-                        <th>Beursnaam</th>
-                        <th>Waarde</th>
-                        <th>Beschikbare Aandelen</th>
-                        <th>Jouw Aandelen</th>
+                        <th>Plaats</th>
+                        <th>Naam</th>
+                        <th>Score</th>
                     </tr>
                     </thead>
-                    <tbody>
-                    @foreach (var beurs in Model.Beurzen)
+                    @for (var index = 0; index < @Model.Count; index++)
                     {
-                        <tr onclick="window.document.location = '@Url.Action("Beurs", new {id = beurs.BeursId})'" style="cursor: pointer">
-                            <td>
-                                <img src="uploads/@beurs.BeursId/32.png" alt=""/>
-                            </td>
-                            <td>
-                                @beurs.Naam
-                            </td>
-                            <td>
-                                @beurs.HuidigeWaarde.ToString("F2")
-                            </td>
-                            <td>
-                                @beurs.BeschikbareAandelen
-                            </td>
-                            <td>
-                                @if (Model.AandeelAantallen.ContainsKey(beurs.BeursId))
-                                {
-                                    @Model.AandeelAantallen[beurs.BeursId]
-                                }
-                                else
-                                {
-                                    @:0
-                                }
-                            </td>
+                        var speler = @Model[index];
+                        <tr>
+                            <td>@(index + 1)</td>
+                            <td>@speler.Naam</td>
+                            <td>@speler.Waarde.ToString("F2")</td>
                         </tr>
                     }
-                    </tbody>
                 </table>
             </div>
         </div>
@@ -70,22 +48,24 @@
 
 @section scripts
 {
+    @await Html.PartialAsync("_DataTableScriptsPartial")
+
     <script>
-        $(function () {
-            $('#beurzen').DataTable({
+        $(function() {
+            $('#users').DataTable({
                 'paging': true,
                 'lengthChange': false,
                 'searching': true,
                 'ordering': true,
                 'info': true,
                 'autoWidth': false,
-                "order": [[1, "desc"]],
                 "columnDefs": [ {
                     "targets": 0,
-                    "orderable": false,
                     "width": 40
                 } ],
-                language: {
+
+
+                'language': {
                     "sProcessing": "Bezig...",
                     "sLengthMenu": "_MENU_ resultaten weergeven",
                     "sZeroRecords": "Geen resultaten gevonden",
@@ -109,7 +89,7 @@
                     }
                 }
             });
-        })
+        });
+
     </script>
-    @await Html.PartialAsync("_DataTableScriptsPartial")
 }

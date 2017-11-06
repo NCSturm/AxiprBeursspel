@@ -1,4 +1,5 @@
-﻿@using Beursspel.Utilities
+﻿@using Beursspel.Models.Beurzen
+@using Beursspel.Utilities
 @model Beursspel.Models.BeursViewModels.BeursModel
 
 @{
@@ -14,8 +15,27 @@
                 <h3 class="box-title">Informatie</h3>
             </div>
             <div class="box-body">
-                <img alt="logo" class="img-responsive center-block"/>
-                <p id="beurs-omschrijving"></p>
+                <table class="table">
+                    <tr>
+                        <td colspan="2">
+                            <img alt="" class="img-responsive center-block" src="uploads/@Model.Beurs.BeursId/128.png"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Leden</th>
+                        <td style="text-align: center;">@Model.Beurs.AantalLeden</td>
+                    </tr>
+                    <tr>
+                        <th>
+                            Omschrijving
+                        </th>
+                        <td>
+                            <div id="beurs-omschrijving" style="margin-left: 10%; margin-right: 10%; text-align: center; '"></div>
+                        </td>
+                    </tr>
+
+                </table>
+                <br/>
             </div>
         </div>
     </div>
@@ -193,7 +213,7 @@
 
         window.onload = function() {
             window.setGebruikerGeld();
-            $("#beurs-omschrijving").html(markdownify("@Model.Beurs.Omschrijving"));
+            $("#beurs-omschrijving").html(markdownify('@Model.Beurs.Omschrijving'));
             setupbeurschart(chartLabels, chartData);
             var maxAantal = Math.floor(@Model.GebruikerGeld / @Model.Beurs.AandeelPrijs);
             if (maxAantal > @Model.Beurs.BeschikbareAandelen) {

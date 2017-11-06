@@ -132,7 +132,8 @@ namespace Beursspel.Controllers
                 {
                     UserName = model.Username.ClearHtml(),
                     Naam = model.Naam.ClearHtml(),
-                    Geld = Settings.StartSpelerGeld
+                    Geld = Settings.StartSpelerGeld,
+                    Waarde = Settings.StartSpelerGeld
                 };
                 IdentityResult result;
                 try

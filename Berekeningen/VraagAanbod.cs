@@ -17,6 +17,7 @@ namespace Beursspel.Berekeningen
                 var beurzen = await db.Beurzen.Include(x => x.Waardes).ToListAsync();
                 foreach (var beurs in beurzen)
                 {
+                    beurs.Waardes.Sort((x, y) => DateTime.Compare(x.Tijd, y.Tijd));
                     var huidigeAandelen = beurs.BeschikbareAandelen;
                     var vorigeAandelen = beurs.VorigeBeschikbareAandelen;
                     var verschil = huidigeAandelen - vorigeAandelen;

@@ -75,6 +75,13 @@ namespace Beursspel
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
 
+            services.ConfigureApplicationCookie(options =>
+            {
+                options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+                options.Cookie.SameSite = SameSiteMode.Strict;
+                options.Cookie.Expiration = TimeSpan.FromMinutes(60);
+            });
+
             services.Configure<SecurityStampValidatorOptions>(options =>
             {
                 // enables immediate logout, after updating the user's stat.
@@ -88,7 +95,8 @@ namespace Beursspel
             services.AddSession(options =>
             {
                 options.IdleTimeout = TimeSpan.FromMinutes(5);
-                options.Cookie.HttpOnly = true;
+                options.Cookie.SameSite = SameSiteMode.Strict;
+                options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
             });
 
             services.AddHangfire(x =>

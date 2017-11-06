@@ -12,6 +12,11 @@
           <i class="fa fa-line-chart"></i> <span>Beurzen</span>
         </a>
       </li>
+      <li >
+        <a href="@Url.Action("Scores", "Home")">
+          <i class="fa fa-star"></i> <span>Scores</span>
+        </a>
+      </li>
       @if (User.IsInRole("Admin"))
       {
         <li class="header">TELMOMENTEN</li>
