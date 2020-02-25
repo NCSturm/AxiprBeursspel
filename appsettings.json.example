@@ -1,0 +1,7 @@
+{
+  "ConnectionString": "Server=127.0.0.1;Port=5432;Database=Beursspel;User Id=[postgres of het andere account wat je hebt gemaakt];Password=[je wachtwoord];",
+  "Recaptcha": {
+    "SecretKey": "blabla fix bij google",
+    "SiteKey": "blabla fix bij google"
+  }
+} 

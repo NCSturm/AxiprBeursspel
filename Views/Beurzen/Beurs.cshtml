@@ -18,7 +18,17 @@
                 <table class="table">
                     <tr>
                         <td colspan="2">
-                            <img alt="" class="img-responsive center-block" src="uploads/@Model.Beurs.BeursId/128.png"/>
+                        @if (Model != null)
+                        {
+                            @if (Model.Beurs.Naam == "Axipr")
+                            {
+                                @:<img alt="" class="img-responsive center-block" src="uploads/@Model.Beurs.BeursId/512.png" />
+                            }
+                            else
+                            {
+                            @:<img alt="" class="img-responsive center-block" src="uploads/@Model.Beurs.BeursId/128.png" />
+                            }
+                        }
                         </td>
                     </tr>
                     <tr>
