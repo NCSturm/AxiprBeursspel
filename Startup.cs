@@ -21,6 +21,7 @@ using Hangfire.PostgreSql;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using PaulMiami.AspNetCore.Mvc.Recaptcha;
+using Microsoft.AspNetCore.HttpOverrides;
 
 namespace Beursspel
 {
@@ -32,7 +33,7 @@ namespace Beursspel
 
         public static bool IsDevelopment;
 
-        public Startup(IConfiguration configuration)
+        public Startup(IConfiguration configuration, IHostingEnvironment env)
         {
             Configuration = new ConfigurationBuilder()
                 .AddJsonFile("appsettings.json")
@@ -40,6 +41,8 @@ namespace Beursspel
                 .Build();
 
             Configuration = configuration;
+
+            IsDevelopment = env.IsDevelopment();
         }
 
         private IConfiguration Configuration { get; }
@@ -77,7 +80,12 @@ namespace Beursspel
 
             services.ConfigureApplicationCookie(options =>
             {
-                options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+                // Deze cookiepolicy zorgt dat het alleen werkt met https verbinding, dus bij development niet
+                // zorg dat bij publish je https heb geregeld
+                if(!IsDevelopment){
+                    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+                }
+
                 options.Cookie.SameSite = SameSiteMode.Strict;
                 options.Cookie.Expiration = TimeSpan.FromMinutes(60);
             });
@@ -156,6 +164,11 @@ namespace Beursspel
 
             app.UseStaticFiles();
 
+            app.UseForwardedHeaders(new ForwardedHeadersOptions
+            {
+                ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+            });
+
             app.UseAuthentication();
 
 
@@ -168,7 +181,7 @@ namespace Beursspel
                     continue;
                 var o = (IRecurringTask)Activator.CreateInstance(type);
                 if (o.Enabled)
-                    RecurringJob.AddOrUpdate(() => o.ExecuteAsync(), o.Cron);
+                    RecurringJob.AddOrUpdate(() => o.ExecuteAsync(), o.Cron, TimeZoneInfo.Local);
             }
 
             app.UseMiddleware<CheckIfOpenMiddleware>();
