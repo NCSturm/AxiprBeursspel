@@ -118,6 +118,10 @@ namespace Beursspel.Controllers
             }
 
             var errors = new List<string>();
+            if (!User.IsInRole("Deelnemer"))
+            {
+                errors.Add("Je bent nog geen deelnemer!");
+            }
 
             var modelValue = model.Aantal * model.Beurs.AandeelPrijs;
             if (model.Aantal <= 0)

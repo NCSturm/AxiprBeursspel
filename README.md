@@ -21,3 +21,5 @@ Installeer dotnet sdk (2.1, maar misschien kan hoger ook)
 - Of via SQL maak een account en maak jezelf admin, of je kan ook in `CheckIfOpen.cs` even de redirect weghalen en in `AdminController.cs` even de `[Authorize]` meuk wegcommenten en dan via de site zelf een account maken en jezelf admin maken
 - voeg alle beurzen toe
 - succes
+- Misschien handig om een systemctl service te maken en die te enablen, scheelt weer moeite
+- vergeet op `Gesloten.cshtml` niet de datum aan te passen van 'we hopen je te zien op x'

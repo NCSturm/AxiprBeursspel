@@ -167,6 +167,7 @@ namespace Beursspel.Controllers
                 user.Geld = 0;
             }
             await _userManager.UpdateAsync(user);
+            ApplicationUser.ResetCache();
             return Ok();
         }
 
